@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package pb.v1;
+
+option go_package = "github.com/byorty/enterprise-application/pbv1";
+
+import "gogoproto/gogo.proto";
+import "google/type/datetime.proto";
+
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unsafe_marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.enum_stringer_all) = true;
+option (gogoproto.goproto_registration) = true;
+option (gogoproto.gogoproto_import) = true;
+
+enum UserGroup {
+    USER_GROUP_GUEST = 0 [
+        (gogoproto.enumvalue_customname) = "UserGroupGuest"
+    ];
+    USER_GROUP_CUSTOMER = 1 [
+        (gogoproto.enumvalue_customname) = "UserGroupCustomer"
+    ];
+}
+
+enum UserStatus {
+    USER_STATUS_UNVERIFIED = 0 [
+        (gogoproto.enumvalue_customname) = "UserStatusUnverified"
+    ];
+    USER_STATUS_UNCONFIRMED = 1 [
+        (gogoproto.enumvalue_customname) = "UserStatusUnconfirmed"
+    ];
+    USER_STATUS_ACTIVE = 2 [
+        (gogoproto.enumvalue_customname) = "UserStatusActive"
+    ];
+    USER_STATUS_BLOCKED = 3 [
+        (gogoproto.enumvalue_customname) = "UserStatusBlocked"
+    ];
+}
+
+message User {
+    string uuid = 1;
+    UserGroup group = 2;
+    UserStatus status = 3;
+    string email = 4;
+    string lastname = 5;
+    string firstname = 6;
+    google.type.DateTime created_at = 7 [(gogoproto.stdtime) = true];
+}
