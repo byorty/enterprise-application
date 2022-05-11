@@ -16,24 +16,24 @@ option (gogoproto.enum_stringer_all) = true;
 option (gogoproto.goproto_registration) = true;
 option (gogoproto.gogoproto_import) = true;
 
-enum UserGroup {
-    UserGroupGuest = 0;
-    UserGroupCustomer = 1;
+enum ProductStatus {
+    ProductUnverified = 0;
+    ProductActive = 1;
+    ProductArchived = 2;
 }
 
-enum UserStatus {
-    UserStatusUnverified = 0;
-    UserStatusUnconfirmed = 1;
-    UserStatusActive = 2;
-    UserStatusBlocked = 3;
+message ProductProperty {
+    string name = 1;
+    string value = 2;
 }
 
-message User {
+message Product {
     string uuid = 1;
-    UserGroup group = 2;
-    UserStatus status = 3;
-    string email = 4;
-    string lastname = 5;
-    string firstname = 6;
-    google.type.DateTime created_at = 7 [(gogoproto.stdtime) = true];
+    ProductStatus status = 2;
+    string name = 3;
+    string description = 4;
+    double price = 5;
+    bool availability = 6;
+    repeated ProductProperty properties = 7;
+    google.type.DateTime created_at = 8 [(gogoproto.stdtime) = true];
 }

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb.v1;
+
+option go_package = "github.com/byorty/enterprise-application/pbv1";
+
+message GetByUUIDRequest {
+    string uuid = 1;
+}
+
+message Paginator {
+    int32 offset = 1;
+    int32 limit = 2;
+}

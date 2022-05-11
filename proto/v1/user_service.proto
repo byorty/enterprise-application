@@ -6,38 +6,49 @@ option go_package = "github.com/byorty/enterprise-application/pbv1";
 
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
+import "proto/v1/common.proto";
 import "proto/v1/user.proto";
 
 service UserService {
-    rpc AuthorizeUser(AuthorizeUserRequest) returns (AuthorizeUserResponse) {
+    rpc SignIn(SignInRequest) returns (TokenResponse) {
         option (google.api.http) = {
-            post: "/v1/users/auth";
+            post: "/v1/users/sign/in";
             body: "*";
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Авторизация пользователя";
+        };
+    };
+    rpc SignUp(SignUpRequest) returns (TokenResponse) {
+        option (google.api.http) = {
+            post: "/v1/users/sign/up";
+            body: "*";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Регистрация пользователя";
         };
     };
     rpc GetByUUID(GetByUUIDRequest) returns (User) {
         option (google.api.http) = {
-            post: "/v1/users/{uuid}";
-            body: "*";
+            get: "/v1/users/{uuid}";
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            summary: "Авторизация пользователя";
+            summary: "Получение пользователя по UUID";
         };
     };
 }
 
-message AuthorizeUserRequest {
+message SignInRequest {
     string email = 1;
     string password = 2;
 }
 
-message AuthorizeUserResponse {
+message TokenResponse {
     string token = 1;
 }
 
-message GetByUUIDRequest {
-    string uuid = 1;
+message SignUpRequest {
+    string email = 1;
+    string password = 2;
+    string repeated_password = 3;
 }
