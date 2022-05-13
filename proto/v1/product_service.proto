@@ -10,7 +10,7 @@ import "proto/v1/common.proto";
 import "proto/v1/product.proto";
 
 service ProductService {
-    rpc GetList(ProductListRequest) returns (ProductListResponse) {
+    rpc GetAllByFilter(ProductsRequest) returns (ProductResponse) {
         option (google.api.http) = {
             get: "/v1/products";
         };
@@ -18,7 +18,7 @@ service ProductService {
             summary: "Получение продуктов по фильтру";
         };
     };
-    rpc GetByUUID(GetByUUIDRequest) returns (Product) {
+    rpc GetByUUID(GetByProductUUIDRequest) returns (Product) {
         option (google.api.http) = {
             get: "/v1/products/{uuid}";
         };
@@ -28,19 +28,24 @@ service ProductService {
     };
 }
 
-message ProductListRequest {
-    ProductListRequestFilter filter = 1;
+message ProductsRequest {
+    ProductsRequestFilter filter = 1;
     Paginator paginator = 2;
 }
 
-message ProductListRequestFilter {
-    string name_contains = 1;
-    double price_gt = 2;
-    double price_lt = 3;
-    repeated ProductProperty properties_eq = 7;
+message ProductsRequestFilter {
+    repeated string uuid_in = 1;
+    string name_contains = 2;
+    double price_gt = 3;
+    double price_lt = 4;
+    repeated ProductProperty properties_eq = 5;
 }
 
-message ProductListResponse {
+message ProductResponse {
     repeated Product items = 1;
-    int32 count = 2;
+    uint32 count = 2;
+}
+
+message GetByProductUUIDRequest {
+    string product_uuid = 1;
 }

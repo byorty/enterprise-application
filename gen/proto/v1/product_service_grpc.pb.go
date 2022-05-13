@@ -22,8 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
-	GetList(ctx context.Context, in *ProductListRequest, opts ...grpc.CallOption) (*ProductListResponse, error)
-	GetByUUID(ctx context.Context, in *GetByUUIDRequest, opts ...grpc.CallOption) (*Product, error)
+	GetAllByFilter(ctx context.Context, in *ProductsRequest, opts ...grpc.CallOption) (*ProductResponse, error)
+	GetByUUID(ctx context.Context, in *GetByProductUUIDRequest, opts ...grpc.CallOption) (*Product, error)
 }
 
 type productServiceClient struct {
@@ -34,16 +34,16 @@ func NewProductServiceClient(cc grpc.ClientConnInterface) ProductServiceClient {
 	return &productServiceClient{cc}
 }
 
-func (c *productServiceClient) GetList(ctx context.Context, in *ProductListRequest, opts ...grpc.CallOption) (*ProductListResponse, error) {
-	out := new(ProductListResponse)
-	err := c.cc.Invoke(ctx, "/pb.v1.ProductService/GetList", in, out, opts...)
+func (c *productServiceClient) GetAllByFilter(ctx context.Context, in *ProductsRequest, opts ...grpc.CallOption) (*ProductResponse, error) {
+	out := new(ProductResponse)
+	err := c.cc.Invoke(ctx, "/pb.v1.ProductService/GetAllByFilter", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *productServiceClient) GetByUUID(ctx context.Context, in *GetByUUIDRequest, opts ...grpc.CallOption) (*Product, error) {
+func (c *productServiceClient) GetByUUID(ctx context.Context, in *GetByProductUUIDRequest, opts ...grpc.CallOption) (*Product, error) {
 	out := new(Product)
 	err := c.cc.Invoke(ctx, "/pb.v1.ProductService/GetByUUID", in, out, opts...)
 	if err != nil {
@@ -56,18 +56,18 @@ func (c *productServiceClient) GetByUUID(ctx context.Context, in *GetByUUIDReque
 // All implementations should embed UnimplementedProductServiceServer
 // for forward compatibility
 type ProductServiceServer interface {
-	GetList(context.Context, *ProductListRequest) (*ProductListResponse, error)
-	GetByUUID(context.Context, *GetByUUIDRequest) (*Product, error)
+	GetAllByFilter(context.Context, *ProductsRequest) (*ProductResponse, error)
+	GetByUUID(context.Context, *GetByProductUUIDRequest) (*Product, error)
 }
 
 // UnimplementedProductServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedProductServiceServer struct {
 }
 
-func (UnimplementedProductServiceServer) GetList(context.Context, *ProductListRequest) (*ProductListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetList not implemented")
+func (UnimplementedProductServiceServer) GetAllByFilter(context.Context, *ProductsRequest) (*ProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllByFilter not implemented")
 }
-func (UnimplementedProductServiceServer) GetByUUID(context.Context, *GetByUUIDRequest) (*Product, error) {
+func (UnimplementedProductServiceServer) GetByUUID(context.Context, *GetByProductUUIDRequest) (*Product, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByUUID not implemented")
 }
 
@@ -82,26 +82,26 @@ func RegisterProductServiceServer(s grpc.ServiceRegistrar, srv ProductServiceSer
 	s.RegisterService(&ProductService_ServiceDesc, srv)
 }
 
-func _ProductService_GetList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProductListRequest)
+func _ProductService_GetAllByFilter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProductsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProductServiceServer).GetList(ctx, in)
+		return srv.(ProductServiceServer).GetAllByFilter(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.v1.ProductService/GetList",
+		FullMethod: "/pb.v1.ProductService/GetAllByFilter",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).GetList(ctx, req.(*ProductListRequest))
+		return srv.(ProductServiceServer).GetAllByFilter(ctx, req.(*ProductsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ProductService_GetByUUID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetByUUIDRequest)
+	in := new(GetByProductUUIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func _ProductService_GetByUUID_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/pb.v1.ProductService/GetByUUID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).GetByUUID(ctx, req.(*GetByUUIDRequest))
+		return srv.(ProductServiceServer).GetByUUID(ctx, req.(*GetByProductUUIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -126,8 +126,8 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ProductServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetList",
-			Handler:    _ProductService_GetList_Handler,
+			MethodName: "GetAllByFilter",
+			Handler:    _ProductService_GetAllByFilter_Handler,
 		},
 		{
 			MethodName: "GetByUUID",

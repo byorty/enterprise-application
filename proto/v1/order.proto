@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package pb.v1;
+
+option go_package = "github.com/byorty/enterprise-application/pbv1";
+
+import "gogoproto/gogo.proto";
+import "google/type/datetime.proto";
+import "proto/v1/common.proto";
+
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unsafe_marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.enum_stringer_all) = true;
+option (gogoproto.goproto_registration) = true;
+option (gogoproto.gogoproto_import) = true;
+
+enum OrderStatus {
+    OrderStatusUnverified = 0;
+    OrderStatusCreated = 1;
+    OrderStatusConfirmed = 2;
+    OrderStatusPaid = 3;
+    OrderStatusProcessed = 4;
+    OrderStatusDelivered = 5;
+}
+
+message Order {
+    string uuid = 1;
+    double amount = 2;
+    string address = 3;
+    OrderStatus status = 4;
+    repeated UserProduct products = 5;
+    google.type.DateTime created_at = 7 [(gogoproto.stdtime) = true];
+}
