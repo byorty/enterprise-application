@@ -65,6 +65,11 @@ service UserService {
 }
 
 message AuthorizeRequest {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+        json_schema: {
+            required: ["email", "password"]
+        }
+    };
     string email = 1;
     string password = 2;
 }
@@ -74,6 +79,11 @@ message TokenResponse {
 }
 
 message RegisterRequest {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+        json_schema: {
+            required: ["email", "password", "repeated_password"]
+        }
+    };
     string email = 1;
     string password = 2;
     string repeated_password = 3;

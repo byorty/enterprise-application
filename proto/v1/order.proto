@@ -4,26 +4,23 @@ package pb.v1;
 
 option go_package = "github.com/byorty/enterprise-application/pbv1";
 
-import "gogoproto/gogo.proto";
+import "patch/go.proto";
 import "google/type/datetime.proto";
+import "google/protobuf/timestamp.proto";
 import "proto/v1/common.proto";
 
-option (gogoproto.goproto_enum_prefix_all) = false;
-option (gogoproto.sizer_all) = true;
-option (gogoproto.marshaler_all) = true;
-option (gogoproto.unsafe_marshaler_all) = true;
-option (gogoproto.unmarshaler_all) = true;
-option (gogoproto.enum_stringer_all) = true;
-option (gogoproto.goproto_registration) = true;
-option (gogoproto.gogoproto_import) = true;
-
 enum OrderStatus {
-    OrderStatusUnverified = 0;
-    OrderStatusCreated = 1;
-    OrderStatusConfirmed = 2;
-    OrderStatusPaid = 3;
-    OrderStatusProcessed = 4;
-    OrderStatusDelivered = 5;
+    ORDER_STATUS_UNVERIFIED = 0 [(go.value) = {
+        name: "OrderStatusUnverified"}];
+    ORDER_STATUS_CREATED = 1 [(go.value) = {
+        name: "OrderStatusCreated"
+    }];
+    ORDER_STATUS_PAID = 2 [(go.value) = {
+        name: "OrderStatusPaid"
+    }];
+    ORDER_STATUS_DELIVERED = 3 [(go.value) = {
+        name: "OrderStatusDelivered"
+    }];
 }
 
 message Order {
@@ -32,5 +29,6 @@ message Order {
     string address = 3;
     OrderStatus status = 4;
     repeated UserProduct products = 5;
-    google.type.DateTime created_at = 7 [(gogoproto.stdtime) = true];
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp delivered_at = 8;
 }

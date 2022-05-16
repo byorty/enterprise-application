@@ -4,22 +4,19 @@ package pb.v1;
 
 option go_package = "github.com/byorty/enterprise-application/pbv1";
 
-import "gogoproto/gogo.proto";
-import "google/type/datetime.proto";
-
-option (gogoproto.goproto_enum_prefix_all) = false;
-option (gogoproto.sizer_all) = true;
-option (gogoproto.marshaler_all) = true;
-option (gogoproto.unsafe_marshaler_all) = true;
-option (gogoproto.unmarshaler_all) = true;
-option (gogoproto.enum_stringer_all) = true;
-option (gogoproto.goproto_registration) = true;
-option (gogoproto.gogoproto_import) = true;
+import "patch/go.proto";
+import "google/protobuf/timestamp.proto";
 
 enum ProductStatus {
-    ProductUnverified = 0;
-    ProductActive = 1;
-    ProductArchived = 2;
+    PRODUCT_STATUS_UNVERIFIED = 0 [(go.value) = {
+        name: "ProductStatusUnverified"
+    }];
+    PRODUCT_STATUS_ACTIVE = 1 [(go.value) = {
+        name: "ProductStatusActive"
+    }];
+    PRODUCT_STATUS_ARCHIVED = 2 [(go.value) = {
+        name: "ProductStatusArchived"
+    }];
 }
 
 message ProductProperty {
@@ -35,5 +32,5 @@ message Product {
     double price = 5;
     bool availability = 6;
     repeated ProductProperty properties = 7;
-    google.type.DateTime created_at = 8 [(gogoproto.stdtime) = true];
+    google.protobuf.Timestamp created_at = 8;
 }

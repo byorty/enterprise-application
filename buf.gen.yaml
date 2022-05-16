@@ -1,10 +1,25 @@
 version: v1
 plugins:
-- name: gogoslick
-  out: gen
-  opt: paths=source_relative
-- name: go-grpc
+- name: go-patch
   out: gen
   opt:
     - paths=source_relative
+    - plugin=go
+- name: go-patch
+  out: gen
+  opt:
+    - paths=source_relative
+    - plugin=go-grpc
     - require_unimplemented_servers=false
+- name: grpc-gateway
+  out: gen
+  opt:
+    - paths=source_relative
+- name: openapiv2
+  out: gen
+  opt:
+    - output_format=yaml
+    - allow_merge=true
+    - merge_file_name=api
+    - json_names_for_fields=false
+    - openapi_naming_strategy=simple

@@ -4,36 +4,39 @@ package pb.v1;
 
 option go_package = "github.com/byorty/enterprise-application/pbv1";
 
-import "gogoproto/gogo.proto";
-import "google/type/datetime.proto";
-
-option (gogoproto.goproto_enum_prefix_all) = false;
-option (gogoproto.sizer_all) = true;
-option (gogoproto.marshaler_all) = true;
-option (gogoproto.unsafe_marshaler_all) = true;
-option (gogoproto.unmarshaler_all) = true;
-option (gogoproto.enum_stringer_all) = true;
-option (gogoproto.goproto_registration) = true;
-option (gogoproto.gogoproto_import) = true;
+import "google/protobuf/timestamp.proto";
+import "patch/go.proto";
 
 enum UserGroup {
-    UserGroupGuest = 0;
-    UserGroupCustomer = 1;
+    USER_STATUS_GUEST = 0 [(go.value) = {
+        name: "UserGroupGuest"
+    }];
+    USER_STATUS_CUSTOMER = 1 [(go.value) = {
+        name: "UserGroupCustomer"
+    }];
 }
 
 enum UserStatus {
-    UserStatusUnverified = 0;
-    UserStatusUnconfirmed = 1;
-    UserStatusActive = 2;
-    UserStatusBlocked = 3;
+    USER_STATUS_UNVERIFIED = 0 [(go.value) = {
+        name: "UserStatusUnverified"
+    }];
+    USER_STATUS_UNCONFIRMED = 1 [(go.value) = {
+        name: "UserStatusUnconfirmed"
+    }];
+    USER_STATUS_ACTIVE = 2 [(go.value) = {
+        name: "UserStatusActive"
+    }];
+    USER_STATUS_BLOCKED = 3 [(go.value) = {
+        name: "UserStatusBlocked"
+    }];
 }
 
 message User {
     string uuid = 1;
     UserGroup group = 2;
     UserStatus status = 3;
-    string email = 4;
+    string phone_number = 4;
     string lastname = 5;
     string firstname = 6;
-    google.type.DateTime created_at = 7 [(gogoproto.stdtime) = true];
+    google.protobuf.Timestamp created_at = 7;
 }

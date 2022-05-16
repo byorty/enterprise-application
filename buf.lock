@@ -14,13 +14,9 @@ deps:
     repository: protoc-gen-validate
     commit: dc09a417d27241f7b069feae2cd74a0e
   - remote: buf.build
-    owner: gogo
-    repository: protobuf
-    commit: 4df00b267f944190a229ce3695781e99
-  - remote: buf.build
     owner: googleapis
     repository: googleapis
-    commit: 25b61e7979474a05afb25f65a0c32220
+    commit: 2ecc14c6771e48bd86ced753e97424ff
   - remote: buf.build
     owner: grpc
     repository: grpc
@@ -29,6 +25,10 @@ deps:
     owner: grpc-ecosystem
     repository: grpc-gateway
     commit: febd9e8be39b4f4b878b9c64bcc203fd
+  - remote: buf.build
+    owner: nvxx
+    repository: protopatch
+    commit: ef95e8420acb4e438d230a2f05895d78
   - remote: buf.build
     owner: opencensus
     repository: opencensus

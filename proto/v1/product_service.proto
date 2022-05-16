@@ -20,7 +20,7 @@ service ProductService {
     };
     rpc GetByUUID(GetByProductUUIDRequest) returns (Product) {
         option (google.api.http) = {
-            get: "/v1/products/{uuid}";
+            get: "/v1/products/{product_uuid}";
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Получение продукта по UUID";
