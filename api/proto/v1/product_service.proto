@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package pb.v1;
+
+option go_package = "github.com/byorty/enterprise-application/internal/pkg/gen/pbv1";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "api/proto/v1/common.proto";
+import "api/proto/v1/product.proto";
+
+service ProductService {
+    rpc GetAllByFilter(ProductsRequest) returns (ProductResponse) {
+        option (google.api.http) = {
+            get: "/v1/products";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Получение продуктов по фильтру";
+        };
+    };
+    rpc GetByUUID(GetByProductUUIDRequest) returns (Product) {
+        option (google.api.http) = {
+            get: "/v1/products/{product_uuid}";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Получение продукта по UUID";
+        };
+    };
+}
+
+message ProductsRequest {
+    ProductsRequestFilter filter = 1;
+    Paginator paginator = 2;
+}
+
+message ProductsRequestFilter {
+    repeated string uuid_in = 1;
+    string name_contains = 2;
+    double price_gt = 3;
+    double price_lt = 4;
+    repeated ProductProperty properties_eq = 5;
+}
+
+message ProductResponse {
+    repeated Product items = 1;
+    uint32 count = 2;
+}
+
+message GetByProductUUIDRequest {
+    string product_uuid = 1;
+}

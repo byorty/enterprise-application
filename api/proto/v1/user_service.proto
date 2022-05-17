@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package pb.v1;
+
+option go_package = "github.com/byorty/enterprise-application/internal/pkg/gen/pbv1";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "api/proto/v1/common.proto";
+import "api/proto/v1/user.proto";
+
+service UserService {
+    rpc Register(RegisterRequest) returns (TokenResponse) {
+        option (google.api.http) = {
+            post: "/v1/users/register";
+            body: "*";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Регистрация пользователя";
+        };
+    };
+    rpc GetByUUID(GetByUserUUIDRequest) returns (User) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_uuid}";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Получение пользователя по UUID";
+        };
+    };
+    rpc GetUserProducts(GetByUserUUIDRequest) returns (UserProductsResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_uuid}/products";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Получение товаров в корзине";
+        };
+    };
+    rpc PutProduct(PutProductRequest) returns (UserProductsResponse) {
+        option (google.api.http) = {
+            post: "/v1/users/{user_uuid}/products";
+            body: "params";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Добавление товара в корзину";
+        };
+    };
+    rpc ChangeProduct(ChangeProductRequest) returns (UserProductsResponse) {
+        option (google.api.http) = {
+            patch: "/v1/users/{user_uuid}/products/{product_uuid}";
+            body: "params";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Изменение количества товара в корзине";
+        };
+    };
+}
+
+message AuthorizeRequest {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+        json_schema: {
+            required: ["email", "password"]
+        }
+    };
+    string email = 1;
+    string password = 2;
+}
+
+message TokenResponse {
+    string token = 1;
+}
+
+message RegisterRequest {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+        json_schema: {
+            required: ["email", "password", "repeated_password"]
+        }
+    };
+    string email = 1;
+    string password = 2;
+    string repeated_password = 3;
+}
+
+message GetByUserUUIDRequest {
+    string user_uuid = 1;
+}
+
+message UserProductsResponse {
+    repeated UserProduct products = 1;
+    uint32 count = 2;
+}
+
+message PutProductRequest {
+    string user_uuid = 1;
+    PutProductRequestParams params = 2;
+}
+
+message PutProductRequestParams {
+    string product_uuid = 1;
+    uint32 product_count = 2;
+}
+
+message ChangeProductRequest {
+    string user_uuid = 1;
+    string product_uuid = 2;
+    ChangeProductRequestParams params = 3;
+}
+
+message ChangeProductRequestParams {
+    uint32 count = 1;
+}

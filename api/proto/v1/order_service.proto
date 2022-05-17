@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package pb.v1;
+
+option go_package = "github.com/byorty/enterprise-application/internal/pkg/gen/pbv1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "api/proto/v1/common.proto";
+import "api/proto/v1/order.proto";
+
+service OrderService {
+    rpc Create(CreateOrderRequest) returns (Order) {
+        option (google.api.http) = {
+            post: "/v1/orders";
+            body: "*";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Создание заказа";
+        };
+    };
+    rpc Checkout(CheckoutOrderRequest) returns (Order) {
+        option (google.api.http) = {
+            post: "/v1/orders/{order_uuid}";
+            body: "params";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Оплата заказа";
+        };
+    };
+}
+
+message CreateOrderRequest {
+    repeated UserProduct products = 1;
+    string address = 2;
+    google.protobuf.Timestamp delivered_at = 3;
+}
+
+message CheckoutOrderRequest {
+    string order_uuid = 1;
+    CheckoutOrderRequestParams params = 2;
+}
+
+message CheckoutOrderRequestParams {
+    double amount = 1;
+    OrderStatus status = 2;
+}

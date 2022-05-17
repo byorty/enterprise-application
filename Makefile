@@ -3,7 +3,7 @@ GOBIN:=$(GOPATH)/bin
 PROTOTOOL:=$(GOBIN)/prototool
 PATH:=$(GOBIN):$(PATH)
 PROJECT_DIR=$(shell pwd)
-GEN_DIR=$(PROJECT_DIR)/gen
+GEN_DIR=$(PROJECT_DIR)/internal/pkg/gen
 
 clean:
 	rm -rf vendor
