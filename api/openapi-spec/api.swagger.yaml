@@ -299,11 +299,11 @@ definitions:
   OrderStatus:
     type: string
     enum:
-    - ORDER_STATUS_UNVERIFIED
+    - ORDER_STATUS_UNSPECIFIED
     - ORDER_STATUS_CREATED
     - ORDER_STATUS_PAID
     - ORDER_STATUS_DELIVERED
-    default: ORDER_STATUS_UNVERIFIED
+    default: ORDER_STATUS_UNSPECIFIED
   Paginator:
     type: object
     properties:
@@ -354,10 +354,10 @@ definitions:
   ProductStatus:
     type: string
     enum:
-    - PRODUCT_STATUS_UNVERIFIED
+    - PRODUCT_STATUS_UNSPECIFIED
     - PRODUCT_STATUS_ACTIVE
     - PRODUCT_STATUS_ARCHIVED
-    default: PRODUCT_STATUS_UNVERIFIED
+    default: PRODUCT_STATUS_UNSPECIFIED
   ProductsRequestFilter:
     type: object
     properties:
@@ -451,8 +451,8 @@ definitions:
   UserStatus:
     type: string
     enum:
-    - USER_STATUS_UNVERIFIED
+    - USER_STATUS_UNSPECIFIED
     - USER_STATUS_UNCONFIRMED
     - USER_STATUS_ACTIVE
     - USER_STATUS_BLOCKED
-    default: USER_STATUS_UNVERIFIED
+    default: USER_STATUS_UNSPECIFIED

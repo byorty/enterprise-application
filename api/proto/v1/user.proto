@@ -17,8 +17,8 @@ enum UserGroup {
 }
 
 enum UserStatus {
-    USER_STATUS_UNVERIFIED = 0 [(go.value) = {
-        name: "UserStatusUnverified"
+    USER_STATUS_UNSPECIFIED = 0 [(go.value) = {
+        name: "UserStatusUnspecified"
     }];
     USER_STATUS_UNCONFIRMED = 1 [(go.value) = {
         name: "UserStatusUnconfirmed"

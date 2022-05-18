@@ -5,13 +5,12 @@ package pb.v1;
 option go_package = "github.com/byorty/enterprise-application/internal/pkg/gen/pbv1";
 
 import "patch/go.proto";
-import "google/type/datetime.proto";
 import "google/protobuf/timestamp.proto";
 import "api/proto/v1/common.proto";
 
 enum OrderStatus {
-    ORDER_STATUS_UNVERIFIED = 0 [(go.value) = {
-        name: "OrderStatusUnverified"}];
+    ORDER_STATUS_UNSPECIFIED = 0 [(go.value) = {
+        name: "OrderStatusUnspecified"}];
     ORDER_STATUS_CREATED = 1 [(go.value) = {
         name: "OrderStatusCreated"
     }];

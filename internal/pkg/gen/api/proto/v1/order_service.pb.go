@@ -193,7 +193,7 @@ func (x *CheckoutOrderRequestParams) GetStatus() OrderStatus {
 	if x != nil {
 		return x.Status
 	}
-	return OrderStatusUnverified
+	return OrderStatusUnspecified
 }
 
 var File_api_proto_v1_order_service_proto protoreflect.FileDescriptor

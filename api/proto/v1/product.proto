@@ -8,8 +8,8 @@ import "patch/go.proto";
 import "google/protobuf/timestamp.proto";
 
 enum ProductStatus {
-    PRODUCT_STATUS_UNVERIFIED = 0 [(go.value) = {
-        name: "ProductStatusUnverified"
+    PRODUCT_STATUS_UNSPECIFIED = 0 [(go.value) = {
+        name: "ProductStatusUnspecified"
     }];
     PRODUCT_STATUS_ACTIVE = 1 [(go.value) = {
         name: "ProductStatusActive"
