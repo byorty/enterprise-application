@@ -266,14 +266,14 @@ func request_UserService_ChangeProduct_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
 	}
 
-	val, ok = pathParams["product_uuid"]
+	val, ok = pathParams["user_product_uuid"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "product_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_product_uuid")
 	}
 
-	protoReq.ProductUuid, err = runtime.String(val)
+	protoReq.UserProductUuid, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "product_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_product_uuid", err)
 	}
 
 	msg, err := client.ChangeProduct(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -310,14 +310,14 @@ func local_request_UserService_ChangeProduct_0(ctx context.Context, marshaler ru
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
 	}
 
-	val, ok = pathParams["product_uuid"]
+	val, ok = pathParams["user_product_uuid"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "product_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_product_uuid")
 	}
 
-	protoReq.ProductUuid, err = runtime.String(val)
+	protoReq.UserProductUuid, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "product_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_product_uuid", err)
 	}
 
 	msg, err := server.ChangeProduct(ctx, &protoReq)
@@ -434,7 +434,7 @@ func RegisterUserServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.v1.UserService/ChangeProduct", runtime.WithHTTPPathPattern("/v1/users/{user_uuid}/products/{product_uuid}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.v1.UserService/ChangeProduct", runtime.WithHTTPPathPattern("/v1/users/{user_uuid}/products/{user_product_uuid}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -581,7 +581,7 @@ func RegisterUserServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pb.v1.UserService/ChangeProduct", runtime.WithHTTPPathPattern("/v1/users/{user_uuid}/products/{product_uuid}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pb.v1.UserService/ChangeProduct", runtime.WithHTTPPathPattern("/v1/users/{user_uuid}/products/{user_product_uuid}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -609,7 +609,7 @@ var (
 
 	pattern_UserService_PutProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "users", "user_uuid", "products"}, ""))
 
-	pattern_UserService_ChangeProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "users", "user_uuid", "products", "product_uuid"}, ""))
+	pattern_UserService_ChangeProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "users", "user_uuid", "products", "user_product_uuid"}, ""))
 )
 
 var (

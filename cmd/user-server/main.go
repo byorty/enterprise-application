@@ -5,7 +5,9 @@ import (
 	"github.com/byorty/enterprise-application/internal/pkg/adapters/logger"
 	"github.com/byorty/enterprise-application/internal/pkg/adapters/server/grpc"
 	pbv1 "github.com/byorty/enterprise-application/internal/pkg/gen/api/proto/v1"
+	productsrcimpl "github.com/byorty/enterprise-application/internal/product/infra/service"
 	userapp "github.com/byorty/enterprise-application/internal/user/infra/app"
+	usersrvimpl "github.com/byorty/enterprise-application/internal/user/infra/service"
 )
 
 func main() {
@@ -18,8 +20,11 @@ func main() {
 			GrpcPort: 8181,
 		},
 	)
+	productService := productsrcimpl.NewProductService()
+	userService := usersrvimpl.NewUserService()
+	userProductService := usersrvimpl.NewUserProductService(userService, productService)
 	err := server.Register(grpc.Descriptor{
-		Server:               userapp.NewServer(),
+		Server:               userapp.NewServer(userService, userProductService),
 		GRPCRegistrar:        pbv1.RegisterUserServiceServer,
 		GRPCGatewayRegistrar: pbv1.RegisterUserServiceHandlerFromEndpoint,
 	})

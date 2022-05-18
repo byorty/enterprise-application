@@ -1,11 +1,14 @@
 swagger: "2.0"
 info:
-  title: api/proto/v1/common.proto
-  version: version not set
+  title: Enterprise Application API
+  version: "1.0"
 tags:
 - name: OrderService
 - name: ProductService
 - name: UserService
+host: enterprise.application.local
+schemes:
+- http
 consumes:
 - application/json
 produces:
@@ -188,7 +191,7 @@ paths:
           $ref: '#/definitions/PutProductRequestParams'
       tags:
       - UserService
-  /v1/users/{user_uuid}/products/{product_uuid}:
+  /v1/users/{user_uuid}/products/{user_product_uuid}:
     patch:
       summary: Изменение количества товара в корзине
       operationId: UserService_ChangeProduct
@@ -206,7 +209,7 @@ paths:
         in: path
         required: true
         type: string
-      - name: product_uuid
+      - name: user_product_uuid
         in: path
         required: true
         type: string
@@ -225,7 +228,7 @@ paths:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/TokenResponse'
+            $ref: '#/definitions/User'
         default:
           description: An unexpected error response.
           schema:
@@ -319,8 +322,6 @@ definitions:
         $ref: '#/definitions/ProductStatus'
       name:
         type: string
-      description:
-        type: string
       price:
         type: number
         format: double
@@ -387,16 +388,10 @@ definitions:
   RegisterRequest:
     type: object
     properties:
-      email:
-        type: string
-      password:
-        type: string
-      repeated_password:
+      phone_number:
         type: string
     required:
-    - email
-    - password
-    - repeated_password
+    - phone_number
   Status:
     type: object
     properties:
@@ -409,11 +404,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Any'
-  TokenResponse:
-    type: object
-    properties:
-      token:
-        type: string
   User:
     type: object
     properties:

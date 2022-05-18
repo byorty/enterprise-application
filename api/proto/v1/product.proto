@@ -28,9 +28,8 @@ message Product {
     string uuid = 1;
     ProductStatus status = 2;
     string name = 3;
-    string description = 4;
-    double price = 5;
-    bool availability = 6;
-    repeated ProductProperty properties = 7;
-    google.protobuf.Timestamp created_at = 8;
+    double price = 4;
+    bool availability = 5;
+    repeated ProductProperty properties = 6;
+    google.protobuf.Timestamp created_at = 7;
 }

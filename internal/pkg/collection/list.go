@@ -38,7 +38,7 @@ func NewList[T any](opts ...ListOption) List[T] {
 	return &l
 }
 
-func NewListFromSlice[T any](slice ...T) List[T] {
+func ImportList[T any](slice ...T) List[T] {
 	l := make(genericList[T], len(slice))
 	copy(l, slice)
 	return &l

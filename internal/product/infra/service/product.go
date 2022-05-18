@@ -2,48 +2,83 @@ package productsrcimpl
 
 import (
 	"context"
-	"github.com/Pallinder/go-randomdata"
 	"github.com/byorty/enterprise-application/internal/pkg/collection"
 	pbv1 "github.com/byorty/enterprise-application/internal/pkg/gen/api/proto/v1"
 	productsrv "github.com/byorty/enterprise-application/internal/product/domain/service"
-	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"strings"
-	"time"
 )
 
 func NewProductService() productsrv.ProductService {
-	products := collection.NewMap[string, *pbv1.Product]()
-	for i := 0; i < 10; i++ {
-		product := &pbv1.Product{
-			Uuid:         uuid.NewString(),
-			Status:       pbv1.ProductStatusActive,
-			Name:         randomdata.Alphanumeric(16),
-			Description:  randomdata.Alphanumeric(64),
-			Price:        randomdata.Decimal(10, 1000),
-			Availability: randomdata.Boolean(),
-			CreatedAt:    timestamppb.New(time.Now()),
-			Properties: []*pbv1.ProductProperty{
-				{
-					Name:  randomdata.Alphanumeric(16),
-					Value: randomdata.Alphanumeric(32),
-				},
-				{
-					Name:  randomdata.Alphanumeric(16),
-					Value: randomdata.Alphanumeric(32),
-				},
-				{
-					Name:  randomdata.Alphanumeric(16),
-					Value: randomdata.Alphanumeric(32),
+	return &productService{
+		products: collection.ImportMap[string, *pbv1.Product](map[string]*pbv1.Product{
+			"42d8d533-5041-4931-a8c1-f215ab69ffe7": {
+				Uuid:         "42d8d533-5041-4931-a8c1-f215ab69ffe7",
+				Status:       pbv1.ProductStatusActive,
+				Name:         "iPhone 13 Pro 256GB",
+				Price:        107000,
+				Availability: true,
+				CreatedAt:    timestamppb.Now(),
+				Properties: []*pbv1.ProductProperty{
+					{
+						Name:  "Цвет товара",
+						Value: "Графитовый",
+					},
+					{
+						Name:  "Процессор",
+						Value: "Apple A15 Bionic",
+					},
+					{
+						Name:  "Встроенная память",
+						Value: "256 ГБ",
+					},
 				},
 			},
-		}
-
-		products.Set(product.Uuid, product)
-	}
-
-	return &productService{
-		products: products,
+			"d51fcd7e-3899-4592-a7cf-06a04a623ed3": {
+				Uuid:         "d51fcd7e-3899-4592-a7cf-06a04a623ed3",
+				Status:       pbv1.ProductStatusActive,
+				Name:         "iPhone 13 128GB",
+				Price:        98000,
+				Availability: true,
+				CreatedAt:    timestamppb.Now(),
+				Properties: []*pbv1.ProductProperty{
+					{
+						Name:  "Цвет товара",
+						Value: "Сияющая звезда",
+					},
+					{
+						Name:  "Процессор",
+						Value: "Apple A15 Bionic",
+					},
+					{
+						Name:  "Встроенная память",
+						Value: "128 ГБ",
+					},
+				},
+			},
+			"9dcd0f0b-79c8-4649-b91f-9a216260c36f": {
+				Uuid:         "9dcd0f0b-79c8-4649-b91f-9a216260c36f",
+				Status:       pbv1.ProductStatusActive,
+				Name:         "Apple Watch Series 7 45 мм Aluminium Case",
+				Price:        42490,
+				Availability: true,
+				CreatedAt:    timestamppb.Now(),
+				Properties: []*pbv1.ProductProperty{
+					{
+						Name:  "Цвет товара",
+						Value: "Темная ночь",
+					},
+					{
+						Name:  "Материал корпуса",
+						Value: "Алюминий",
+					},
+					{
+						Name:  "Размер корпуса",
+						Value: "45 мм",
+					},
+				},
+			},
+		}),
 	}
 }
 
@@ -54,16 +89,18 @@ type productService struct {
 func (s *productService) GetAllByFilter(ctx context.Context, params *pbv1.ProductsRequestFilter, paginator *pbv1.Paginator) ([]*pbv1.Product, uint32, error) {
 	products := collection.NewList[*pbv1.Product]()
 	for _, product := range s.products.Entries() {
-		if params.PriceLt > 0 && product.Price > params.PriceLt {
-			continue
-		}
+		if params != nil {
+			if params.PriceLt > 0 && product.Price > params.PriceLt {
+				continue
+			}
 
-		if params.PriceGt > 0 && product.Price < params.PriceGt {
-			continue
-		}
+			if params.PriceGt > 0 && product.Price < params.PriceGt {
+				continue
+			}
 
-		if len(params.NameContains) > 0 && !strings.Contains(product.Name, params.NameContains) {
-			continue
+			if len(params.NameContains) > 0 && !strings.Contains(product.Name, params.NameContains) {
+				continue
+			}
 		}
 
 		products.Add(product)

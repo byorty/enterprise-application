@@ -14,6 +14,10 @@ func NewMap[K comparable, V any]() Map[K, V] {
 	return make(genericMap[K, V])
 }
 
+func ImportMap[K comparable, V any](m map[K]V) Map[K, V] {
+	return genericMap[K, V](m)
+}
+
 type genericMap[K comparable, V any] map[K]V
 
 func (m genericMap[K, V]) Set(key K, value V) {

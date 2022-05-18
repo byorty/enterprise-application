@@ -10,7 +10,7 @@ import "api/proto/v1/common.proto";
 import "api/proto/v1/user.proto";
 
 service UserService {
-    rpc Register(RegisterRequest) returns (TokenResponse) {
+    rpc Register(RegisterRequest) returns (User) {
         option (google.api.http) = {
             post: "/v1/users/register";
             body: "*";
@@ -46,7 +46,7 @@ service UserService {
     };
     rpc ChangeProduct(ChangeProductRequest) returns (UserProductsResponse) {
         option (google.api.http) = {
-            patch: "/v1/users/{user_uuid}/products/{product_uuid}";
+            patch: "/v1/users/{user_uuid}/products/{user_product_uuid}";
             body: "params";
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -55,29 +55,13 @@ service UserService {
     };
 }
 
-message AuthorizeRequest {
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-        json_schema: {
-            required: ["email", "password"]
-        }
-    };
-    string email = 1;
-    string password = 2;
-}
-
-message TokenResponse {
-    string token = 1;
-}
-
 message RegisterRequest {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
         json_schema: {
-            required: ["email", "password", "repeated_password"]
+            required: ["phone_number"]
         }
     };
-    string email = 1;
-    string password = 2;
-    string repeated_password = 3;
+    string phone_number = 1;
 }
 
 message GetByUserUUIDRequest {
@@ -101,7 +85,7 @@ message PutProductRequestParams {
 
 message ChangeProductRequest {
     string user_uuid = 1;
-    string product_uuid = 2;
+    string user_product_uuid = 2;
     ChangeProductRequestParams params = 3;
 }
 

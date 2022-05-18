@@ -40,7 +40,7 @@ func (s *orderService) Create(ctx context.Context, request *pbv1.CreateOrderRequ
 			return nil, err
 		}
 
-		order.Amount += product.Price
+		order.Amount += product.Price * float64(userProduct.Count)
 	}
 
 	s.orders.Set(order.Uuid, order)

@@ -14,3 +14,9 @@ message UserProduct {
     string product_uuid = 2;
     uint32 count = 3;
 }
+
+message Error {
+    uint32 code = 1;
+    string message = 2;
+    map<string, string> details = 3;
+}

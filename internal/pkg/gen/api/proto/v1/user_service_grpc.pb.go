@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*TokenResponse, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*User, error)
 	GetByUUID(ctx context.Context, in *GetByUserUUIDRequest, opts ...grpc.CallOption) (*User, error)
 	GetUserProducts(ctx context.Context, in *GetByUserUUIDRequest, opts ...grpc.CallOption) (*UserProductsResponse, error)
 	PutProduct(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*UserProductsResponse, error)
@@ -37,8 +37,8 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 	return &userServiceClient{cc}
 }
 
-func (c *userServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*TokenResponse, error) {
-	out := new(TokenResponse)
+func (c *userServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
 	err := c.cc.Invoke(ctx, "/pb.v1.UserService/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func (c *userServiceClient) ChangeProduct(ctx context.Context, in *ChangeProduct
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
-	Register(context.Context, *RegisterRequest) (*TokenResponse, error)
+	Register(context.Context, *RegisterRequest) (*User, error)
 	GetByUUID(context.Context, *GetByUserUUIDRequest) (*User, error)
 	GetUserProducts(context.Context, *GetByUserUUIDRequest) (*UserProductsResponse, error)
 	PutProduct(context.Context, *PutProductRequest) (*UserProductsResponse, error)
@@ -97,7 +97,7 @@ type UserServiceServer interface {
 type UnimplementedUserServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) Register(context.Context, *RegisterRequest) (*TokenResponse, error) {
+func (UnimplementedUserServiceServer) Register(context.Context, *RegisterRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedUserServiceServer) GetByUUID(context.Context, *GetByUserUUIDRequest) (*User, error) {
