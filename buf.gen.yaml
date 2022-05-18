@@ -1,18 +1,18 @@
 version: v1
 plugins:
 - name: go-patch
-  out: internal/pkg/gen
+  out: pkg/common/gen
   opt:
     - paths=source_relative
     - plugin=go
 - name: go-patch
-  out: internal/pkg/gen
+  out: pkg/common/gen
   opt:
     - paths=source_relative
     - plugin=go-grpc
     - require_unimplemented_servers=false
 - name: grpc-gateway
-  out: internal/pkg/gen
+  out: pkg/common/gen
   opt:
     - paths=source_relative
 - name: openapiv2

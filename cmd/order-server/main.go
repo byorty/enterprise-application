@@ -2,16 +2,16 @@ package main
 
 import (
 	"context"
-	orderapp "github.com/byorty/enterprise-application/internal/order/infra/app"
-	ordersrvimpl "github.com/byorty/enterprise-application/internal/order/infra/service"
-	"github.com/byorty/enterprise-application/internal/pkg/adapters/logger"
-	"github.com/byorty/enterprise-application/internal/pkg/adapters/server/grpc"
-	pbv1 "github.com/byorty/enterprise-application/internal/pkg/gen/api/proto/v1"
-	productsrcimpl "github.com/byorty/enterprise-application/internal/product/infra/service"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
+	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
+	orderapp "github.com/byorty/enterprise-application/pkg/order/infra/app"
+	ordersrvimpl "github.com/byorty/enterprise-application/pkg/order/infra/service"
+	productsrcimpl "github.com/byorty/enterprise-application/pkg/product/infra/service"
 )
 
 func main() {
-	l := logger.NewDefaultLogger()
+	l := log.NewDefaultLogger()
 	server := grpc.NewServer(
 		context.Background(),
 		l,

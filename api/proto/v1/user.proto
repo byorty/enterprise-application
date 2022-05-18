@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb.v1;
 
-option go_package = "github.com/byorty/enterprise-application/internal/pkg/gen/pbv1";
+option go_package = "github.com/byorty/enterprise-application/pkg/common/gen/pbv1";
 
 import "google/protobuf/timestamp.proto";
 import "patch/go.proto";
