@@ -47,3 +47,41 @@ down:
 	docker-compose -p $(PROJECT_NAME) -f $(DOCKER_COMPOSE) down --remove-orphans
 	docker image prune -f
 	docker volume prune -f
+
+#init:
+#curl -g "http://enterprise.application.local/graphql" -d '
+#{
+#	products(paginator: {limit: 10}) {
+#		items {
+#			uuid
+#			name
+#			price
+#			availability
+#		}
+#		count
+#	}
+#	user(user_uuid: "387301f4-551c-4022-900a-80f6f76f3a10") {
+#		uuid
+#		status
+#		phone_number
+#	}
+#	user_products(user_uuid: "387301f4-551c-4022-900a-80f6f76f3a10") {
+#		products {
+#			product_uuid
+#			count
+#		}
+#	}
+#}'
+
+#cart:
+#curl -g "http://enterprise.application.local/graphql" -d '
+#{
+#	products(filter: {uuid_in: ["d51fcd7e-3899-4592-a7cf-06a04a623ed3", "d51fcd7e-3899-4592-a7cf-06a04a623ed3"]}) {
+#		items {
+#			uuid
+#			name
+#			price
+#			availability
+#		}
+#	}
+#}'

@@ -4,6 +4,7 @@ deps:
   - buf.build/grpc/grpc
   - buf.build/grpc-ecosystem/grpc-gateway
   - buf.build/nvxx/protopatch
+  - buf.build/ccc/grpc-graphql-gateway
 breaking:
   use:
     - FILE

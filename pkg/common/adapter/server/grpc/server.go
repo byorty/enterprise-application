@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	httpruntime "github.com/grpc-ecosystem/grpc-gateway/runtime"
+	graphqlruntime "github.com/ysugimoto/grpc-graphql-gateway/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net"
@@ -18,9 +19,10 @@ type Server interface {
 }
 
 type Descriptor struct {
-	Server               interface{}
-	GRPCRegistrar        interface{}
-	GRPCGatewayRegistrar func(context.Context, *runtime.ServeMux, string, []grpc.DialOption) error
+	Server                  interface{}
+	GRPCRegistrar           interface{}
+	GRPCGatewayRegistrar    func(context.Context, *httpruntime.ServeMux, string, []grpc.DialOption) (err error)
+	GraphqlGatewayRegistrar func(*graphqlruntime.ServeMux) (err error)
 }
 
 func NewServer(
@@ -33,7 +35,8 @@ func NewServer(
 		cfg:        cfg,
 		logger:     logger.Named("grpc"),
 		grpcServer: grpc.NewServer(),
-		mux:        runtime.NewServeMux(),
+		httpMux:    httpruntime.NewServeMux(),
+		graphqlMux: graphqlruntime.NewServeMux(),
 		opts: []grpc.DialOption{
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
 		},
@@ -49,49 +52,82 @@ type server struct {
 	cfg           Config
 	grpcServer    *grpc.Server
 	gatewayServer *http.Server
-	mux           *runtime.ServeMux
+	httpMux       *httpruntime.ServeMux
+	graphqlMux    *graphqlruntime.ServeMux
 	opts          []grpc.DialOption
 	errors        chan error
 }
 
 func (s *server) Register(descriptor Descriptor) error {
-	reflect.ValueOf(descriptor.GRPCRegistrar).Call([]reflect.Value{
-		reflect.ValueOf(s.grpcServer),
-		reflect.ValueOf(descriptor.Server),
-	})
+	if descriptor.GRPCRegistrar != nil {
+		reflect.ValueOf(descriptor.GRPCRegistrar).Call([]reflect.Value{
+			reflect.ValueOf(s.grpcServer),
+			reflect.ValueOf(descriptor.Server),
+		})
+	}
+
 	if descriptor.GRPCGatewayRegistrar != nil {
-		return descriptor.GRPCGatewayRegistrar(s.ctx, s.mux, fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.GrpcPort), s.opts)
+		err := descriptor.GRPCGatewayRegistrar(s.ctx, s.httpMux, fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.GrpcPort), s.opts)
+		if err != nil {
+			return err
+		}
+	}
+
+	if descriptor.GraphqlGatewayRegistrar != nil {
+		err := descriptor.GraphqlGatewayRegistrar(s.graphqlMux)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
 func (s *server) Start() error {
-	go func(logger log.Logger) {
-		netAddress := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.GrpcPort)
+	if s.cfg.GrpcPort > 0 {
+		go func(logger log.Logger) {
+			netAddress := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.GrpcPort)
 
-		logger.Infof("start server at %s", netAddress)
-		socket, err := net.Listen("tcp", netAddress)
-		if err != nil {
-			s.errors <- err
-			return
-		}
+			logger.Infof("start grpc server at %s", netAddress)
+			socket, err := net.Listen("tcp", netAddress)
+			if err != nil {
+				s.errors <- err
+				return
+			}
 
-		s.errors <- s.grpcServer.Serve(socket)
-	}(s.logger.Named("grpc_server"))
+			s.errors <- s.grpcServer.Serve(socket)
+		}(s.logger.Named("grpc_server"))
+	}
 
-	go func(logger log.Logger) {
-		netAddress := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.HttpPort)
+	if s.cfg.HttpPort > 0 {
+		go func(logger log.Logger) {
+			netAddress := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.HttpPort)
 
-		s.gatewayServer = &http.Server{
-			Addr:    netAddress,
-			Handler: s.mux,
-		}
+			httpServer := &http.Server{
+				Addr:    netAddress,
+				Handler: s.httpMux,
+			}
 
-		logger.Infof("start gateway at %s", netAddress)
+			logger.Infof("start http server at %s", netAddress)
 
-		s.errors <- s.gatewayServer.ListenAndServe()
-	}(s.logger.Named("http_server"))
+			s.errors <- httpServer.ListenAndServe()
+		}(s.logger.Named("http_server"))
+	}
+
+	if s.cfg.GraphqlPort > 0 {
+		go func(logger log.Logger) {
+			netAddress := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.GraphqlPort)
+
+			graphqlServer := &http.Server{
+				Addr:    netAddress,
+				Handler: s.graphqlMux,
+			}
+
+			logger.Infof("start graphql server at %s", netAddress)
+
+			s.errors <- graphqlServer.ListenAndServe()
+		}(s.logger.Named("graphql_server"))
+	}
 
 	return <-s.errors
 }

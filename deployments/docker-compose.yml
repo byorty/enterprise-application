@@ -32,3 +32,12 @@ services:
       dockerfile: ${PROJECT_DIR}/deployments/Dockerfile
       args:
         BUILD_APP_NAME: product-server
+  graphql_server:
+    build:
+      context: ..
+      dockerfile: ${PROJECT_DIR}/deployments/Dockerfile
+      args:
+        BUILD_APP_NAME: graphql-server
+    depends_on:
+      - product_server
+      - user_server

@@ -1,0 +1,89 @@
+type Google_type_Timestamp {
+  nanos: Int!
+  seconds: Int!
+}
+
+enum Pbv1_Enum_ProductStatus {
+  PRODUCT_STATUS_ACTIVE
+  PRODUCT_STATUS_ARCHIVED
+  PRODUCT_STATUS_UNSPECIFIED
+}
+
+enum Pbv1_Enum_UserGroup {
+  USER_STATUS_GUEST
+  USER_STATUS_CUSTOMER
+}
+
+enum Pbv1_Enum_UserStatus {
+  USER_STATUS_UNSPECIFIED
+  USER_STATUS_UNCONFIRMED
+  USER_STATUS_ACTIVE
+  USER_STATUS_BLOCKED
+}
+
+input Pbv1_Input_Paginator {
+  offset: Int
+  limit: Int
+}
+
+input Pbv1_Input_ProductProperty {
+  name: String
+  value: String
+}
+
+input Pbv1_Input_ProductsRequestFilter {
+  name_contains: String
+  price_gt: Float
+  price_lt: Float
+  properties_eq: [Pbv1_Input_ProductProperty]
+  uuid_in: [String]
+}
+
+type Pbv1_Type_Product {
+  availability: Boolean
+  created_at: Google_type_Timestamp
+  name: String
+  price: Float
+  properties: [Pbv1_Type_ProductProperty]
+  status: Pbv1_Enum_ProductStatus
+  uuid: String
+}
+
+type Pbv1_Type_ProductProperty {
+  name: String
+  value: String
+}
+
+type Pbv1_Type_ProductResponse {
+  count: Int
+  items: [Pbv1_Type_Product]
+}
+
+type Pbv1_Type_User {
+  created_at: Google_type_Timestamp
+  firstname: String
+  group: Pbv1_Enum_UserGroup
+  lastname: String
+  phone_number: String
+  status: Pbv1_Enum_UserStatus
+  uuid: String
+}
+
+type Pbv1_Type_UserProduct {
+  count: Int
+  product_uuid: String
+  uuid: String
+}
+
+type Pbv1_Type_UserProductsResponse {
+  count: Int
+  products: [Pbv1_Type_UserProduct]
+}
+
+type Query {
+  product(product_uuid: String): Pbv1_Type_Product
+  products(paginator: Pbv1_Input_Paginator, filter: Pbv1_Input_ProductsRequestFilter): Pbv1_Type_ProductResponse
+  user(user_uuid: String): Pbv1_Type_User
+  user_products(user_uuid: String): Pbv1_Type_UserProductsResponse
+}
+

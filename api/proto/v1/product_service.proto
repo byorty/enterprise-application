@@ -8,14 +8,23 @@ import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "api/proto/v1/common.proto";
 import "api/proto/v1/product.proto";
+import "include/graphql/graphql.proto";
 
 service ProductService {
+    option (graphql.service) = {
+        host: "product_server:8181";
+        insecure: true;
+    };
     rpc GetAllByFilter(ProductsRequest) returns (ProductResponse) {
         option (google.api.http) = {
             get: "/v1/products";
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Получение продуктов по фильтру";
+        };
+        option (graphql.schema) = {
+            type: QUERY
+            name: "products"
         };
     };
     rpc GetByUUID(GetByProductUUIDRequest) returns (Product) {
@@ -24,6 +33,10 @@ service ProductService {
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Получение продукта по UUID";
+        };
+        option (graphql.schema) = {
+            type: QUERY
+            name: "product"
         };
     };
 }

@@ -23,3 +23,7 @@ plugins:
     - merge_file_name=api
     - json_names_for_fields=false
     - openapi_naming_strategy=simple
+- name: graphql
+  out: pkg/common/gen
+  opt:
+    - paths=source_relative

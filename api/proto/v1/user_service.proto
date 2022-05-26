@@ -8,8 +8,13 @@ import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "api/proto/v1/common.proto";
 import "api/proto/v1/user.proto";
+import "include/graphql/graphql.proto";
 
 service UserService {
+    option (graphql.service) = {
+        host: "user_server:8181";
+        insecure: true;
+    };
     rpc Register(RegisterRequest) returns (User) {
         option (google.api.http) = {
             post: "/v1/users/register";
@@ -26,10 +31,18 @@ service UserService {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Получение пользователя по UUID";
         };
+        option (graphql.schema) = {
+            type: QUERY
+            name: "user"
+        };
     };
     rpc GetUserProducts(GetByUserUUIDRequest) returns (UserProductsResponse) {
         option (google.api.http) = {
             get: "/v1/users/{user_uuid}/products";
+        };
+        option (graphql.schema) = {
+            type: QUERY
+            name: "user_products"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Получение товаров в корзине";
