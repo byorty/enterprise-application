@@ -2,19 +2,24 @@ package userapp
 
 import (
 	"context"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	usersrv "github.com/byorty/enterprise-application/pkg/user/domain/service"
 )
 
 var _ pbv1.UserServiceServer = (*server)(nil)
 
-func NewServer(
+func NewFxUserServiceServer(
 	userService usersrv.UserService,
 	userProductService usersrv.UserProductService,
-) pbv1.UserServiceServer {
-	return &server{
-		userService:        userService,
-		userProductService: userProductService,
+) grpc.Descriptor {
+	return grpc.Descriptor{
+		Server: &server{
+			userService:        userService,
+			userProductService: userProductService,
+		},
+		GRPCRegistrar:        pbv1.RegisterUserServiceServer,
+		GRPCGatewayRegistrar: pbv1.RegisterUserServiceHandlerFromEndpoint,
 	}
 }
 

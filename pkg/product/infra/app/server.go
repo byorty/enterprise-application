@@ -2,17 +2,22 @@ package productapp
 
 import (
 	"context"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	productsrv "github.com/byorty/enterprise-application/pkg/product/domain/service"
 )
 
 var _ pbv1.ProductServiceServer = (*server)(nil)
 
-func NewServer(
+func NewFxProductServiceServer(
 	productService productsrv.ProductService,
-) pbv1.ProductServiceServer {
-	return &server{
-		productService: productService,
+) grpc.Descriptor {
+	return grpc.Descriptor{
+		Server: &server{
+			productService: productService,
+		},
+		GRPCRegistrar:        pbv1.RegisterProductServiceServer,
+		GRPCGatewayRegistrar: pbv1.RegisterProductServiceHandlerFromEndpoint,
 	}
 }
 

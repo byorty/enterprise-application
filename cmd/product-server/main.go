@@ -1,37 +1,35 @@
 package main
 
 import (
-	"context"
-	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
+	commonadap "github.com/byorty/enterprise-application/pkg/common/adapter"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
-	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
+	orderadap "github.com/byorty/enterprise-application/pkg/order/infra"
+	productsadap "github.com/byorty/enterprise-application/pkg/product/infra"
 	productapp "github.com/byorty/enterprise-application/pkg/product/infra/app"
-	productsrcimpl "github.com/byorty/enterprise-application/pkg/product/infra/service"
 )
 
 func main() {
-	l := log.NewDefaultLogger()
-	server := grpc.NewServer(
-		context.Background(),
-		l,
-		grpc.Config{
-			HttpPort: 8080,
-			GrpcPort: 8181,
-		},
+	app := application.New(
+		commonadap.Constructors,
+		productsadap.Constructors,
+		orderadap.Constructors,
+		productapp.NewFxProductServiceServer,
 	)
+	app.Demonize(func(
+		server grpc.Server,
+		descriptor grpc.Descriptor,
+	) error {
+		err := server.Register(descriptor)
+		if err != nil {
+			return err
+		}
 
-	productService := productsrcimpl.NewProductService()
-	err := server.Register(grpc.Descriptor{
-		Server:               productapp.NewServer(productService),
-		GRPCRegistrar:        pbv1.RegisterProductServiceServer,
-		GRPCGatewayRegistrar: pbv1.RegisterProductServiceHandlerFromEndpoint,
+		err = server.Start()
+		if err != nil {
+			return err
+		}
+
+		return nil
 	})
-	if err != nil {
-		l.Fatal(err)
-	}
-
-	err = server.Start()
-	if err != nil {
-		l.Fatal(err)
-	}
 }

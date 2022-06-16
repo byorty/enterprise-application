@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func NewUserService() usersrv.UserService {
+func NewFxUserService() usersrv.UserService {
 	return &userService{
 		users: collection.ImportMap[string, *pbv1.User](map[string]*pbv1.User{
 			"387301f4-551c-4022-900a-80f6f76f3a10": {

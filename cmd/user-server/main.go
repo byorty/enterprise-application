@@ -1,39 +1,37 @@
 package main
 
 import (
-	"context"
-	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
+	commonadap "github.com/byorty/enterprise-application/pkg/common/adapter"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
-	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
-	productsrcimpl "github.com/byorty/enterprise-application/pkg/product/infra/service"
-	userapp "github.com/byorty/enterprise-application/pkg/user/infra/app"
-	usersrvimpl "github.com/byorty/enterprise-application/pkg/user/infra/service"
+	orderadap "github.com/byorty/enterprise-application/pkg/order/infra"
+	productsadap "github.com/byorty/enterprise-application/pkg/product/infra"
+	productapp "github.com/byorty/enterprise-application/pkg/product/infra/app"
+	useradap "github.com/byorty/enterprise-application/pkg/user/infra"
 )
 
 func main() {
-	l := log.NewDefaultLogger()
-	server := grpc.NewServer(
-		context.Background(),
-		l,
-		grpc.Config{
-			HttpPort: 8080,
-			GrpcPort: 8181,
-		},
+	app := application.New(
+		commonadap.Constructors,
+		productsadap.Constructors,
+		useradap.Constructors,
+		orderadap.Constructors,
+		productapp.NewFxProductServiceServer,
 	)
-	productService := productsrcimpl.NewProductService()
-	userService := usersrvimpl.NewUserService()
-	userProductService := usersrvimpl.NewUserProductService(userService, productService)
-	err := server.Register(grpc.Descriptor{
-		Server:               userapp.NewServer(userService, userProductService),
-		GRPCRegistrar:        pbv1.RegisterUserServiceServer,
-		GRPCGatewayRegistrar: pbv1.RegisterUserServiceHandlerFromEndpoint,
-	})
-	if err != nil {
-		l.Fatal(err)
-	}
+	app.Demonize(func(
+		server grpc.Server,
+		descriptor grpc.Descriptor,
+	) error {
+		err := server.Register(descriptor)
+		if err != nil {
+			return err
+		}
 
-	err = server.Start()
-	if err != nil {
-		l.Fatal(err)
-	}
+		err = server.Start()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 }

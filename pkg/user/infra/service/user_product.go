@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func NewUserProductService(
+func NewFxUserProductService(
 	userService usersrv.UserService,
 	productService productsrv.ProductService,
 ) usersrv.UserProductService {

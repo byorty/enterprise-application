@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -23,11 +24,17 @@ type Descriptor struct {
 	GRPCGatewayRegistrar func(context.Context, *runtime.ServeMux, string, []grpc.DialOption) error
 }
 
-func NewServer(
+func NewFxServer(
 	ctx context.Context,
 	logger log.Logger,
-	cfg Config,
-) Server {
+	configProvider application.Provider,
+) (Server, error) {
+	var cfg Config
+	err := configProvider.PopulateByKey("server", &cfg)
+	if err != nil {
+		return nil, err
+	}
+
 	srv := &server{
 		ctx:        ctx,
 		cfg:        cfg,
@@ -40,7 +47,7 @@ func NewServer(
 		errors: make(chan error, 1),
 	}
 
-	return srv
+	return srv, nil
 }
 
 type server struct {

@@ -23,7 +23,7 @@ type Logger interface {
 	Named(string) Logger
 }
 
-func NewDefaultLogger() Logger {
+func NewFxLogger() Logger {
 	cfg := zap.Config{
 		Level:            zap.NewAtomicLevelAt(zap.DebugLevel),
 		DisableCaller:    false,

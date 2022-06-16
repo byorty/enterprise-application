@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func NewProductService() productsrv.ProductService {
+func NewFxProductService() productsrv.ProductService {
 	return &productService{
 		products: collection.ImportMap[string, *pbv1.Product](map[string]*pbv1.Product{
 			"42d8d533-5041-4931-a8c1-f215ab69ffe7": {

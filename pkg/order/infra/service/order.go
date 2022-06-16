@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func NewOrderService(
+func NewFxOrderService(
 	productService productsrv.ProductService,
 ) ordersrv.OrderService {
 	return &orderService{
