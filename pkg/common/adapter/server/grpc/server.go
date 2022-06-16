@@ -16,23 +16,23 @@ import (
 )
 
 type Middleware struct {
-	Order      int
+	Priority   int
 	GrpcOption grpc.UnaryServerInterceptor
 	MuxOption  runtime.ServeMuxOption
 }
 
-type ByOrder []Middleware
+type ByPriority []Middleware
 
-func (b ByOrder) Len() int {
+func (b ByPriority) Len() int {
 	return len(b)
 }
 
-func (b ByOrder) Swap(i, j int) {
+func (b ByPriority) Swap(i, j int) {
 	b[i], b[j] = b[j], b[i]
 }
 
-func (b ByOrder) Less(i, j int) bool {
-	return b[i].Order > b[j].Order
+func (b ByPriority) Less(i, j int) bool {
+	return b[i].Priority > b[j].Priority
 }
 
 type MiddlewareOut struct {
@@ -70,8 +70,8 @@ func NewFxServer(
 		return nil, err
 	}
 
-	sort.Sort(ByOrder(in.MuxMiddlewares))
-	sort.Sort(ByOrder(in.GrpcMiddlewares))
+	sort.Sort(ByPriority(in.MuxMiddlewares))
+	sort.Sort(ByPriority(in.GrpcMiddlewares))
 
 	interceptors := make([]grpc.UnaryServerInterceptor, len(in.GrpcMiddlewares))
 	for i, middleware := range in.GrpcMiddlewares {

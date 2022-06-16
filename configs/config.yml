@@ -3,3 +3,7 @@ server:
   grpc_port: 8181
   max_send_message_length: 2147483647
   max_receive_message_length: 63554432
+
+enforcer:
+  model_file: ${PROJECT_DIR}/configs/enforcer/model.conf
+  policy_file: ${PROJECT_DIR}/configs/enforcer/policy.csv

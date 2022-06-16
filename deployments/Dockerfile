@@ -2,12 +2,11 @@ FROM alpine:latest
 
 ARG BUILD_APP_NAME
 
-ENV GOPATH=/go
-ENV GOBIN=${GOPATH}/bin
+ENV PROJECT_DIR=/go
 
 RUN apk add tzdata
 
 COPY ./build/${BUILD_APP_NAME} ${GOBIN}/app
-COPY ./configs ${GOPATH}/configs
+COPY ./configs ${PROJECT_DIR}/configs
 
-CMD ${GOBIN}/app -c ${GOPATH}/configs/config.yml
+CMD ${PROJECT_DIR}/bin/app -c ${PROJECT_DIR}/configs/config.yml

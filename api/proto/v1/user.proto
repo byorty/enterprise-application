@@ -8,10 +8,10 @@ import "google/protobuf/timestamp.proto";
 import "patch/go.proto";
 
 enum UserGroup {
-    USER_STATUS_GUEST = 0 [(go.value) = {
+    USER_GROUP_GUEST = 0 [(go.value) = {
         name: "UserGroupGuest"
     }];
-    USER_STATUS_CUSTOMER = 1 [(go.value) = {
+    USER_GROUP_CUSTOMER = 1 [(go.value) = {
         name: "UserGroupCustomer"
     }];
 }
@@ -39,4 +39,55 @@ message User {
     string lastname = 5;
     string firstname = 6;
     google.protobuf.Timestamp created_at = 7;
+}
+
+message Session {
+    string uuid = 1;
+    UserGroup group = 2;
+}
+
+enum PermissionObject {
+    PERMISSION_OBJECT_UNSPECIFIED = 0 [
+        (go.value) = {
+            name: "PermissionObjectUnspecified"
+        }
+    ];
+    PERMISSION_OBJECT_USER = 1 [
+        (go.value) = {
+            name: "PermissionObjectUser"
+        }
+    ];
+    PERMISSION_OBJECT_PRODUCT = 2 [
+        (go.value) = {
+            name: "PermissionObjectProduct"
+        }
+    ];
+    PERMISSION_OBJECT_ORDER = 3 [
+        (go.value) = {
+            name: "PermissionObjectOrder"
+        }
+    ];
+    PERMISSION_OBJECT_USER_PRODUCT = 4 [
+        (go.value) = {
+            name: "PermissionObjectUserProduct"
+        }
+    ];
+}
+
+enum PermissionOperation {
+    PERMISSION_OPERATION_UNSPECIFIED = 0 [
+        (go.value) = {
+            name: "PermissionOperationUnspecified"
+        }
+    ];
+    PERMISSION_OPERATION_READ = 1 [
+        (go.value) = {
+            name: "PermissionOperationRead"
+        }
+    ];
+    PERMISSION_OPERATION_WRITE = 2 [
+        (go.value) = {
+            name: "PermissionOperationWrite"
+        }
+    ];
 }

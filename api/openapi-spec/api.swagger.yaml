@@ -425,9 +425,9 @@ definitions:
   UserGroup:
     type: string
     enum:
-    - USER_STATUS_GUEST
-    - USER_STATUS_CUSTOMER
-    default: USER_STATUS_GUEST
+    - USER_GROUP_GUEST
+    - USER_GROUP_CUSTOMER
+    default: USER_GROUP_GUEST
   UserProduct:
     type: object
     properties:
