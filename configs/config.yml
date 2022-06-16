@@ -1,3 +1,5 @@
 server:
   http_port: 8080
   grpc_port: 8181
+  max_send_message_length: 2147483647
+  max_receive_message_length: 63554432

@@ -6,12 +6,40 @@ import (
 	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net"
 	"net/http"
 	"reflect"
+	"sort"
 )
+
+type Middleware struct {
+	Order      int
+	GrpcOption grpc.UnaryServerInterceptor
+	MuxOption  runtime.ServeMuxOption
+}
+
+type ByOrder []Middleware
+
+func (b ByOrder) Len() int {
+	return len(b)
+}
+
+func (b ByOrder) Swap(i, j int) {
+	b[i], b[j] = b[j], b[i]
+}
+
+func (b ByOrder) Less(i, j int) bool {
+	return b[i].Order > b[j].Order
+}
+
+type MiddlewareOut struct {
+	fx.Out
+	GrpcMiddleware Middleware `group:"grpc_middleware"`
+	MuxMiddleware  Middleware `group:"mux_middleware"`
+}
 
 type Server interface {
 	Register(descriptor Descriptor) error
@@ -24,25 +52,55 @@ type Descriptor struct {
 	GRPCGatewayRegistrar func(context.Context, *runtime.ServeMux, string, []grpc.DialOption) error
 }
 
+type FxServerIn struct {
+	fx.In
+	Ctx             context.Context
+	Logger          log.Logger
+	ConfigProvider  application.Provider
+	GrpcMiddlewares []Middleware `group:"grpc_middleware"`
+	MuxMiddlewares  []Middleware `group:"mux_middleware"`
+}
+
 func NewFxServer(
-	ctx context.Context,
-	logger log.Logger,
-	configProvider application.Provider,
+	in FxServerIn,
 ) (Server, error) {
 	var cfg Config
-	err := configProvider.PopulateByKey("server", &cfg)
+	err := in.ConfigProvider.PopulateByKey("server", &cfg)
 	if err != nil {
 		return nil, err
 	}
 
+	sort.Sort(ByOrder(in.MuxMiddlewares))
+	sort.Sort(ByOrder(in.GrpcMiddlewares))
+
+	interceptors := make([]grpc.UnaryServerInterceptor, len(in.GrpcMiddlewares))
+	for i, middleware := range in.GrpcMiddlewares {
+		interceptors[i] = middleware.GrpcOption
+	}
+
+	serverMuxOptions := make([]runtime.ServeMuxOption, len(in.MuxMiddlewares))
+	for i, middleware := range in.MuxMiddlewares {
+		serverMuxOptions[i] = middleware.MuxOption
+	}
+
 	srv := &server{
-		ctx:        ctx,
-		cfg:        cfg,
-		logger:     logger.Named("grpc"),
-		grpcServer: grpc.NewServer(),
-		mux:        runtime.NewServeMux(),
+		ctx:    in.Ctx,
+		cfg:    cfg,
+		logger: in.Logger.Named("grpc"),
+		grpcServer: grpc.NewServer(
+			grpc.MaxRecvMsgSize(cfg.MaxReceiveMessageLength),
+			grpc.MaxSendMsgSize(cfg.MaxSendMessageLength),
+			grpc.ChainUnaryInterceptor(interceptors...),
+		),
+		mux: runtime.NewServeMux(
+			serverMuxOptions...,
+		),
 		opts: []grpc.DialOption{
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
+			grpc.WithDefaultCallOptions(
+				grpc.MaxCallRecvMsgSize(cfg.MaxReceiveMessageLength),
+				grpc.MaxCallSendMsgSize(cfg.MaxSendMessageLength),
+			),
 		},
 		errors: make(chan error, 1),
 	}

@@ -47,3 +47,5 @@ down:
 	docker-compose -p $(PROJECT_NAME) -f $(DOCKER_COMPOSE) down --remove-orphans
 	docker image prune -f
 	docker volume prune -f
+
+restart: down up
