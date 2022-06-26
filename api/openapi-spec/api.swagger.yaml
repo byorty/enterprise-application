@@ -1,458 +1,458 @@
 swagger: "2.0"
 info:
-  title: Enterprise Application API
-  version: "1.0"
+    title: Enterprise Application API
+    version: "1.0"
 tags:
-- name: OrderService
-- name: ProductService
-- name: UserService
+    - name: OrderService
+    - name: ProductService
+    - name: UserService
 host: enterprise.application.local
 schemes:
-- http
+    - http
 consumes:
-- application/json
+    - application/json
 produces:
-- application/json
+    - application/json
 paths:
-  /v1/orders:
-    post:
-      summary: Создание заказа
-      operationId: OrderService_Create
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/Order'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/Status'
-      parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/CreateOrderRequest'
-      tags:
-      - OrderService
-  /v1/orders/{order_uuid}:
-    post:
-      summary: Оплата заказа
-      operationId: OrderService_Checkout
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/Order'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/Status'
-      parameters:
-      - name: order_uuid
-        in: path
-        required: true
-        type: string
-      - name: params
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/CheckoutOrderRequestParams'
-      tags:
-      - OrderService
-  /v1/products:
-    get:
-      summary: Получение продуктов по фильтру
-      operationId: ProductService_GetAllByFilter
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/ProductResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/Status'
-      parameters:
-      - name: filter.uuid_in
-        in: query
-        required: false
-        type: array
-        items:
-          type: string
-        collectionFormat: multi
-      - name: filter.name_contains
-        in: query
-        required: false
-        type: string
-      - name: filter.price_gt
-        in: query
-        required: false
-        type: number
-        format: double
-      - name: filter.price_lt
-        in: query
-        required: false
-        type: number
-        format: double
-      - name: paginator.offset
-        in: query
-        required: false
-        type: integer
-        format: int64
-      - name: paginator.limit
-        in: query
-        required: false
-        type: integer
-        format: int64
-      tags:
-      - ProductService
-  /v1/products/{product_uuid}:
-    get:
-      summary: Получение продукта по UUID
-      operationId: ProductService_GetByUUID
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/Product'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/Status'
-      parameters:
-      - name: product_uuid
-        in: path
-        required: true
-        type: string
-      tags:
-      - ProductService
-  /v1/users/{user_uuid}:
-    get:
-      summary: Получение пользователя по UUID
-      operationId: UserService_GetByUUID
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/User'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/Status'
-      parameters:
-      - name: user_uuid
-        in: path
-        required: true
-        type: string
-      tags:
-      - UserService
-  /v1/users/{user_uuid}/products:
-    get:
-      summary: Получение товаров в корзине
-      operationId: UserService_GetUserProducts
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/UserProductsResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/Status'
-      parameters:
-      - name: user_uuid
-        in: path
-        required: true
-        type: string
-      tags:
-      - UserService
-    post:
-      summary: Добавление товара в корзину
-      operationId: UserService_PutProduct
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/UserProductsResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/Status'
-      parameters:
-      - name: user_uuid
-        in: path
-        required: true
-        type: string
-      - name: params
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/PutProductRequestParams'
-      tags:
-      - UserService
-  /v1/users/{user_uuid}/products/{user_product_uuid}:
-    patch:
-      summary: Изменение количества товара в корзине
-      operationId: UserService_ChangeProduct
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/UserProductsResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/Status'
-      parameters:
-      - name: user_uuid
-        in: path
-        required: true
-        type: string
-      - name: user_product_uuid
-        in: path
-        required: true
-        type: string
-      - name: params
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/ChangeProductRequestParams'
-      tags:
-      - UserService
-  /v1/users/register:
-    post:
-      summary: Регистрация пользователя
-      operationId: UserService_Register
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/User'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/Status'
-      parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/RegisterRequest'
-      tags:
-      - UserService
+    /v1/orders:
+        post:
+            summary: Создание заказа
+            operationId: OrderService_Create
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/Order'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: body
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CreateOrderRequest'
+            tags:
+                - OrderService
+    /v1/orders/{order_uuid}:
+        post:
+            summary: Оплата заказа
+            operationId: OrderService_Checkout
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/Order'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: order_uuid
+                  in: path
+                  required: true
+                  type: string
+                - name: params
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CheckoutOrderRequestParams'
+            tags:
+                - OrderService
+    /v1/products:
+        get:
+            summary: Получение продуктов по фильтру
+            operationId: ProductService_GetAllByFilter
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/ProductResponse'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: filter.uuid_in
+                  in: query
+                  required: false
+                  type: array
+                  items:
+                    type: string
+                  collectionFormat: multi
+                - name: filter.name_contains
+                  in: query
+                  required: false
+                  type: string
+                - name: filter.price_gt
+                  in: query
+                  required: false
+                  type: number
+                  format: double
+                - name: filter.price_lt
+                  in: query
+                  required: false
+                  type: number
+                  format: double
+                - name: paginator.offset
+                  in: query
+                  required: false
+                  type: integer
+                  format: int64
+                - name: paginator.limit
+                  in: query
+                  required: false
+                  type: integer
+                  format: int64
+            tags:
+                - ProductService
+    /v1/products/{product_uuid}:
+        get:
+            summary: Получение продукта по UUID
+            operationId: ProductService_GetByUUID
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/Product'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: product_uuid
+                  in: path
+                  required: true
+                  type: string
+            tags:
+                - ProductService
+    /v1/users/{user_uuid}:
+        get:
+            summary: Получение пользователя по UUID
+            operationId: UserService_GetByUUID
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/User'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: user_uuid
+                  in: path
+                  required: true
+                  type: string
+            tags:
+                - UserService
+    /v1/users/{user_uuid}/products:
+        get:
+            summary: Получение товаров в корзине
+            operationId: UserService_GetUserProducts
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/UserProductsResponse'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: user_uuid
+                  in: path
+                  required: true
+                  type: string
+            tags:
+                - UserService
+        post:
+            summary: Добавление товара в корзину
+            operationId: UserService_PutProduct
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/UserProductsResponse'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: user_uuid
+                  in: path
+                  required: true
+                  type: string
+                - name: params
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/PutProductRequestParams'
+            tags:
+                - UserService
+    /v1/users/{user_uuid}/products/{user_product_uuid}:
+        patch:
+            summary: Изменение количества товара в корзине
+            operationId: UserService_ChangeProduct
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/UserProductsResponse'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: user_uuid
+                  in: path
+                  required: true
+                  type: string
+                - name: user_product_uuid
+                  in: path
+                  required: true
+                  type: string
+                - name: params
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/ChangeProductRequestParams'
+            tags:
+                - UserService
+    /v1/users/register:
+        post:
+            summary: Регистрация пользователя
+            operationId: UserService_Register
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/User'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: body
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/RegisterRequest'
+            tags:
+                - UserService
 definitions:
-  Any:
-    type: object
-    properties:
-      '@type':
+    Any:
+        type: object
+        properties:
+            '@type':
+                type: string
+        additionalProperties: {}
+    ChangeProductRequestParams:
+        type: object
+        properties:
+            count:
+                type: integer
+                format: int64
+    CheckoutOrderRequestParams:
+        type: object
+        properties:
+            amount:
+                type: number
+                format: double
+            status:
+                $ref: '#/definitions/OrderStatus'
+    CreateOrderRequest:
+        type: object
+        properties:
+            address:
+                type: string
+            delivered_at:
+                type: string
+                format: date-time
+            products:
+                type: array
+                items:
+                    $ref: '#/definitions/UserProduct'
+    Order:
+        type: object
+        properties:
+            address:
+                type: string
+            amount:
+                type: number
+                format: double
+            created_at:
+                type: string
+                format: date-time
+            delivered_at:
+                type: string
+                format: date-time
+            products:
+                type: array
+                items:
+                    $ref: '#/definitions/UserProduct'
+            status:
+                $ref: '#/definitions/OrderStatus'
+            uuid:
+                type: string
+    OrderStatus:
         type: string
-    additionalProperties: {}
-  ChangeProductRequestParams:
-    type: object
-    properties:
-      count:
-        type: integer
-        format: int64
-  CheckoutOrderRequestParams:
-    type: object
-    properties:
-      amount:
-        type: number
-        format: double
-      status:
-        $ref: '#/definitions/OrderStatus'
-  CreateOrderRequest:
-    type: object
-    properties:
-      products:
-        type: array
-        items:
-          $ref: '#/definitions/UserProduct'
-      address:
+        enum:
+            - ORDER_STATUS_UNSPECIFIED
+            - ORDER_STATUS_CREATED
+            - ORDER_STATUS_PAID
+            - ORDER_STATUS_DELIVERED
+        default: ORDER_STATUS_UNSPECIFIED
+    Paginator:
+        type: object
+        properties:
+            limit:
+                type: integer
+                format: int64
+            offset:
+                type: integer
+                format: int64
+    Product:
+        type: object
+        properties:
+            availability:
+                type: boolean
+            created_at:
+                type: string
+                format: date-time
+            name:
+                type: string
+            price:
+                type: number
+                format: double
+            properties:
+                type: array
+                items:
+                    $ref: '#/definitions/ProductProperty'
+            status:
+                $ref: '#/definitions/ProductStatus'
+            uuid:
+                type: string
+    ProductProperty:
+        type: object
+        properties:
+            name:
+                type: string
+            value:
+                type: string
+    ProductResponse:
+        type: object
+        properties:
+            count:
+                type: integer
+                format: int64
+            items:
+                type: array
+                items:
+                    $ref: '#/definitions/Product'
+    ProductStatus:
         type: string
-      delivered_at:
+        enum:
+            - PRODUCT_STATUS_UNSPECIFIED
+            - PRODUCT_STATUS_ACTIVE
+            - PRODUCT_STATUS_ARCHIVED
+        default: PRODUCT_STATUS_UNSPECIFIED
+    ProductsRequestFilter:
+        type: object
+        properties:
+            name_contains:
+                type: string
+            price_gt:
+                type: number
+                format: double
+            price_lt:
+                type: number
+                format: double
+            properties_eq:
+                type: array
+                items:
+                    $ref: '#/definitions/ProductProperty'
+            uuid_in:
+                type: array
+                items:
+                    type: string
+    PutProductRequestParams:
+        type: object
+        properties:
+            product_count:
+                type: integer
+                format: int64
+            product_uuid:
+                type: string
+    RegisterRequest:
+        type: object
+        properties:
+            phone_number:
+                type: string
+        required:
+            - phone_number
+    Status:
+        type: object
+        properties:
+            code:
+                type: integer
+                format: int32
+            details:
+                type: array
+                items:
+                    $ref: '#/definitions/Any'
+            message:
+                type: string
+    User:
+        type: object
+        properties:
+            created_at:
+                type: string
+                format: date-time
+            firstname:
+                type: string
+            group:
+                $ref: '#/definitions/UserGroup'
+            lastname:
+                type: string
+            phone_number:
+                type: string
+            status:
+                $ref: '#/definitions/UserStatus'
+            uuid:
+                type: string
+    UserGroup:
         type: string
-        format: date-time
-  Order:
-    type: object
-    properties:
-      uuid:
+        enum:
+            - USER_GROUP_GUEST
+            - USER_GROUP_CUSTOMER
+        default: USER_GROUP_GUEST
+    UserProduct:
+        type: object
+        properties:
+            count:
+                type: integer
+                format: int64
+            product_uuid:
+                type: string
+            uuid:
+                type: string
+    UserProductsResponse:
+        type: object
+        properties:
+            count:
+                type: integer
+                format: int64
+            products:
+                type: array
+                items:
+                    $ref: '#/definitions/UserProduct'
+    UserStatus:
         type: string
-      amount:
-        type: number
-        format: double
-      address:
-        type: string
-      status:
-        $ref: '#/definitions/OrderStatus'
-      products:
-        type: array
-        items:
-          $ref: '#/definitions/UserProduct'
-      created_at:
-        type: string
-        format: date-time
-      delivered_at:
-        type: string
-        format: date-time
-  OrderStatus:
-    type: string
-    enum:
-    - ORDER_STATUS_UNSPECIFIED
-    - ORDER_STATUS_CREATED
-    - ORDER_STATUS_PAID
-    - ORDER_STATUS_DELIVERED
-    default: ORDER_STATUS_UNSPECIFIED
-  Paginator:
-    type: object
-    properties:
-      offset:
-        type: integer
-        format: int64
-      limit:
-        type: integer
-        format: int64
-  Product:
-    type: object
-    properties:
-      uuid:
-        type: string
-      status:
-        $ref: '#/definitions/ProductStatus'
-      name:
-        type: string
-      price:
-        type: number
-        format: double
-      availability:
-        type: boolean
-      properties:
-        type: array
-        items:
-          $ref: '#/definitions/ProductProperty'
-      created_at:
-        type: string
-        format: date-time
-  ProductProperty:
-    type: object
-    properties:
-      name:
-        type: string
-      value:
-        type: string
-  ProductResponse:
-    type: object
-    properties:
-      items:
-        type: array
-        items:
-          $ref: '#/definitions/Product'
-      count:
-        type: integer
-        format: int64
-  ProductStatus:
-    type: string
-    enum:
-    - PRODUCT_STATUS_UNSPECIFIED
-    - PRODUCT_STATUS_ACTIVE
-    - PRODUCT_STATUS_ARCHIVED
-    default: PRODUCT_STATUS_UNSPECIFIED
-  ProductsRequestFilter:
-    type: object
-    properties:
-      uuid_in:
-        type: array
-        items:
-          type: string
-      name_contains:
-        type: string
-      price_gt:
-        type: number
-        format: double
-      price_lt:
-        type: number
-        format: double
-      properties_eq:
-        type: array
-        items:
-          $ref: '#/definitions/ProductProperty'
-  PutProductRequestParams:
-    type: object
-    properties:
-      product_uuid:
-        type: string
-      product_count:
-        type: integer
-        format: int64
-  RegisterRequest:
-    type: object
-    properties:
-      phone_number:
-        type: string
-    required:
-    - phone_number
-  Status:
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
-      details:
-        type: array
-        items:
-          $ref: '#/definitions/Any'
-  User:
-    type: object
-    properties:
-      uuid:
-        type: string
-      group:
-        $ref: '#/definitions/UserGroup'
-      status:
-        $ref: '#/definitions/UserStatus'
-      phone_number:
-        type: string
-      lastname:
-        type: string
-      firstname:
-        type: string
-      created_at:
-        type: string
-        format: date-time
-  UserGroup:
-    type: string
-    enum:
-    - USER_GROUP_GUEST
-    - USER_GROUP_CUSTOMER
-    default: USER_GROUP_GUEST
-  UserProduct:
-    type: object
-    properties:
-      uuid:
-        type: string
-      product_uuid:
-        type: string
-      count:
-        type: integer
-        format: int64
-  UserProductsResponse:
-    type: object
-    properties:
-      products:
-        type: array
-        items:
-          $ref: '#/definitions/UserProduct'
-      count:
-        type: integer
-        format: int64
-  UserStatus:
-    type: string
-    enum:
-    - USER_STATUS_UNSPECIFIED
-    - USER_STATUS_UNCONFIRMED
-    - USER_STATUS_ACTIVE
-    - USER_STATUS_BLOCKED
-    default: USER_STATUS_UNSPECIFIED
+        enum:
+            - USER_STATUS_UNSPECIFIED
+            - USER_STATUS_UNCONFIRMED
+            - USER_STATUS_ACTIVE
+            - USER_STATUS_BLOCKED
+        default: USER_STATUS_UNSPECIFIED

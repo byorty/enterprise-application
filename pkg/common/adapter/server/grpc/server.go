@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -50,6 +50,7 @@ type Descriptor struct {
 	Server               interface{}
 	GRPCRegistrar        interface{}
 	GRPCGatewayRegistrar func(context.Context, *runtime.ServeMux, string, []grpc.DialOption) error
+	MethodDescriptors    []MethodDescriptor
 }
 
 type FxServerIn struct {

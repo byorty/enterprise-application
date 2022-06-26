@@ -2,17 +2,14 @@ package mux_option
 
 import (
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"google.golang.org/protobuf/encoding/protojson"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
 
 func NewFxMarshalerOption() grpc.MiddlewareOut {
 	return grpc.MiddlewareOut{
 		MuxMiddleware: grpc.Middleware{
 			MuxOption: runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
-				MarshalOptions: protojson.MarshalOptions{
-					UseProtoNames: true,
-				},
+				OrigName: true,
 			}),
 		},
 	}
