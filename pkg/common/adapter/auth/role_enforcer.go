@@ -1,16 +1,15 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	"github.com/casbin/casbin/v2"
+	"strings"
 )
 
 type RoleEnforcer interface {
-	Enforce(args ...interface{}) (bool, error)
-	HasPolicy(args ...interface{}) bool
+	Enforce(session pbv1.Session, role pbv1.Role, permission pbv1.Permission) (bool, error)
 }
 
 type roleEnforcer struct {
@@ -39,50 +38,10 @@ func NewFxRoleEnforcer(
 	}, nil
 }
 
-func (e *roleEnforcer) Enforce(args ...interface{}) (bool, error) {
-	casted, err := e.transform(args...)
-	if err != nil {
-		return false, err
-	}
-	return e.enforcer.Enforce(casted...)
-}
-
-func (e *roleEnforcer) HasPolicy(args ...interface{}) bool {
-	casted, err := e.transform(args...)
-	if err != nil {
-		return false
-	}
-	return e.enforcer.HasPolicy(casted...)
-}
-
-func (e *roleEnforcer) transform(args ...interface{}) ([]interface{}, error) {
-	var session pbv1.Session
-	var obj pbv1.PermissionObject
-	var operation pbv1.PermissionOperation
-	var ok bool
-	for i, arg := range args {
-		switch i {
-		case 0:
-			session, ok = arg.(pbv1.Session)
-			if !ok {
-				return nil, fmt.Errorf("%d arg type %T is unexpected ", i, arg)
-			}
-		case 1:
-			obj, ok = arg.(pbv1.PermissionObject)
-			if !ok {
-				return nil, fmt.Errorf("%d arg type %T is unexpected ", i, arg)
-			}
-		case 2:
-			operation, ok = arg.(pbv1.PermissionOperation)
-			if !ok {
-				return nil, fmt.Errorf("%d arg type %T is unexpected ", i, arg)
-			}
-		}
-	}
-
-	return []interface{}{
-		pbv1.UserGroup_name[int32(session.Group)],
-		pbv1.PermissionObject_name[int32(obj)],
-		pbv1.PermissionOperation_name[int32(operation)],
-	}, nil
+func (e *roleEnforcer) Enforce(session pbv1.Session, role pbv1.Role, permission pbv1.Permission) (bool, error) {
+	return e.enforcer.Enforce(
+		strings.ReplaceAll(pbv1.UserGroup_name[int32(session.Group)], "USER_GROUP_", ""),
+		pbv1.Role_name[int32(role)],
+		pbv1.Permission_name[int32(permission)],
+	)
 }

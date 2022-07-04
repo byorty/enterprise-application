@@ -11,6 +11,8 @@ type Validator interface {
 	Validate(ctx context.Context, message protoreflect.Message, field protoreflect.FieldDescriptor) error
 }
 
+type DescriptorOutFunc func() DescriptorOut
+
 type DescriptorOut struct {
 	fx.Out
 	Descriptor Descriptor `group:"validator"`

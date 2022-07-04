@@ -7,15 +7,14 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
-func NewFxUUID() Descriptor {
-	return Descriptor{
-		Names: []string{
-			"uuid",
-			"order_uuid",
-			"product_uuid",
-			"user_uuid",
-		},
-		Validator: new(uuidValidator),
+func NewFxUUID(names ...string) DescriptorOutFunc {
+	return func() DescriptorOut {
+		return DescriptorOut{
+			Descriptor: Descriptor{
+				Names:     names,
+				Validator: new(uuidValidator),
+			},
+		}
 	}
 }
 

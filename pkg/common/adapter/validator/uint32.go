@@ -7,36 +7,35 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
-func NewFxOptionalUint32() DescriptorOut {
-	return DescriptorOut{
-		Descriptor: Descriptor{
-			Names: []string{
-				"offset",
-				"limit",
-			},
-			Validator: &uint32Validator{
-				rules: []validation.Rule{
-					is.Int,
+func NewFxOptionalUint32(names ...string) DescriptorOutFunc {
+	return func() DescriptorOut {
+		return DescriptorOut{
+			Descriptor: Descriptor{
+				Names: names,
+				Validator: &uint32Validator{
+					rules: []validation.Rule{
+						is.Int,
+					},
 				},
 			},
-		},
+		}
 	}
 }
 
-func NewFxRequiredUint32() DescriptorOut {
-	return DescriptorOut{
-		Descriptor: Descriptor{
-			Names: []string{
-				"count",
-			},
-			Validator: &uint32Validator{
-				rules: []validation.Rule{
-					validation.Required,
-					is.Int,
-					validation.Min(0),
+func NewFxRequiredUint32(names ...string) DescriptorOutFunc {
+	return func() DescriptorOut {
+		return DescriptorOut{
+			Descriptor: Descriptor{
+				Names: names,
+				Validator: &uint32Validator{
+					rules: []validation.Rule{
+						validation.Required,
+						is.Int,
+						validation.Min(0),
+					},
 				},
 			},
-		},
+		}
 	}
 }
 

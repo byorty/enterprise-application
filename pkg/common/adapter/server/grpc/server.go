@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

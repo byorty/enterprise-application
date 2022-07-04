@@ -1,24 +1,54 @@
-package auth
+package jwtutil
 
 import (
 	"crypto/rsa"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
 	"github.com/dgrijalva/jwt-go"
+	"io/ioutil"
 )
 
 type Claims interface {
 	jwt.Claims
 }
 
-type JWTHelper interface {
+type Helper interface {
 	Parse(token string, claims Claims) error
 	CreateToken(claims Claims) (string, error)
 }
 
-func NewFxJWTHelper(publicKey *rsa.PublicKey, privateKey *rsa.PrivateKey) JWTHelper {
+func NewFxHelper(
+	provider application.Provider,
+) (Helper, error) {
+	var cfg Config
+	err := provider.PopulateByKey("ssl", &cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	buf, err := ioutil.ReadFile(cfg.PrivateKeyFile)
+	if err != nil {
+		return nil, err
+	}
+
+	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(buf)
+	if err != nil {
+		return nil, err
+	}
+
+	buf, err = ioutil.ReadFile(cfg.PublicKeyFile)
+	if err != nil {
+		return nil, err
+	}
+
+	publicKey, err := jwt.ParseRSAPublicKeyFromPEM(buf)
+	if err != nil {
+		return nil, err
+	}
+
 	return &jwtHelper{
 		publicKey:  publicKey,
 		privateKey: privateKey,
-	}
+	}, nil
 }
 
 type jwtHelper struct {
@@ -33,6 +63,7 @@ func (h *jwtHelper) Parse(token string, claims Claims) error {
 	if err != nil {
 		return err
 	}
+
 	err = claims.Valid()
 	if err != nil {
 		return err

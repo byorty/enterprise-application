@@ -4,11 +4,11 @@ deps:
   - remote: buf.build
     owner: cncf
     repository: xds
-    commit: e3e5ba6d8b9643d7bc4568012e38d9c0
+    commit: 0492166643854ea08814f4349286f9cb
   - remote: buf.build
     owner: envoyproxy
     repository: envoy
-    commit: 799653c0dbe64c66956cc6e71ed1fe05
+    commit: 14eefb0da6dc45b784fc05e55e66326d
   - remote: buf.build
     owner: envoyproxy
     repository: protoc-gen-validate
@@ -16,15 +16,15 @@ deps:
   - remote: buf.build
     owner: googleapis
     repository: googleapis
-    commit: 2ecc14c6771e48bd86ced753e97424ff
+    commit: fdc236b6d1644b29a6161156ce08d8a2
   - remote: buf.build
     owner: grpc
     repository: grpc
-    commit: 25f19aa01ca2439fbf8294ba2437f604
+    commit: 40b550c256324a8f85ba933e92479f95
   - remote: buf.build
     owner: grpc-ecosystem
     repository: grpc-gateway
-    commit: febd9e8be39b4f4b878b9c64bcc203fd
+    commit: 00116f302b12478b85deb33b734e026c
   - remote: buf.build
     owner: nvxx
     repository: protopatch
@@ -36,7 +36,7 @@ deps:
   - remote: buf.build
     owner: opentelemetry
     repository: opentelemetry
-    commit: 4ce6c0069cce466e809dcdff82136c44
+    commit: 509848662be44e4d8aaf9189f6e6ab01
   - remote: buf.build
     owner: prometheus
     repository: client-model

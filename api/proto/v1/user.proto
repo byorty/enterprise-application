@@ -46,48 +46,48 @@ message Session {
     UserGroup group = 2;
 }
 
-enum PermissionObject {
-    PERMISSION_OBJECT_UNSPECIFIED = 0 [
+enum Role {
+    ROLE_UNSPECIFIED = 0 [
         (go.value) = {
-            name: "PermissionObjectUnspecified"
+            name: "RoleUnspecified"
         }
     ];
-    PERMISSION_OBJECT_USER = 1 [
+    ROLE_USER = 1 [
         (go.value) = {
-            name: "PermissionObjectUser"
+            name: "RoleUser"
         }
     ];
-    PERMISSION_OBJECT_PRODUCT = 2 [
+    ROLE_PRODUCT = 2 [
         (go.value) = {
-            name: "PermissionObjectProduct"
+            name: "RoleProduct"
         }
     ];
-    PERMISSION_OBJECT_ORDER = 3 [
+    ROLE_ORDER = 3 [
         (go.value) = {
-            name: "PermissionObjectOrder"
+            name: "RoleOrder"
         }
     ];
-    PERMISSION_OBJECT_USER_PRODUCT = 4 [
+    ROLE_USER_PRODUCT = 4 [
         (go.value) = {
-            name: "PermissionObjectUserProduct"
+            name: "RoleUserProduct"
         }
     ];
 }
 
-enum PermissionOperation {
-    PERMISSION_OPERATION_UNSPECIFIED = 0 [
+enum Permission {
+    PERMISSION_UNSPECIFIED = 0 [
         (go.value) = {
-            name: "PermissionOperationUnspecified"
+            name: "PermissionUnspecified"
         }
     ];
-    PERMISSION_OPERATION_READ = 1 [
+    PERMISSION_READ = 1 [
         (go.value) = {
-            name: "PermissionOperationRead"
+            name: "PermissionRead"
         }
     ];
-    PERMISSION_OPERATION_WRITE = 2 [
+    PERMISSION_WRITE = 2 [
         (go.value) = {
-            name: "PermissionOperationWrite"
+            name: "PermissionWrite"
         }
     ];
 }

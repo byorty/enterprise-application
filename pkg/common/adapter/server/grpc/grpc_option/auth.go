@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/auth"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/ctxutil"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/jwtutil"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
@@ -13,7 +14,7 @@ import (
 
 func NewFxAuthOption(
 	logger log.Logger,
-	jwtHelper auth.JWTHelper,
+	jwtHelper jwtutil.Helper,
 ) grpc.MiddlewareOut {
 	return grpc.MiddlewareOut{
 		GrpcMiddleware: grpc.Middleware{

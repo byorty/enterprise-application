@@ -7,3 +7,8 @@ server:
 enforcer:
   model_file: ${PROJECT_DIR}/configs/enforcer/model.conf
   policy_file: ${PROJECT_DIR}/configs/enforcer/policy.csv
+
+ssl:
+  cert_file: ${PROJECT_DIR}/ssl/crt.pem
+  private_key_file: ${PROJECT_DIR}/ssl/private.key.pem
+  public_key_file: ${PROJECT_DIR}/ssl/public.key.pem

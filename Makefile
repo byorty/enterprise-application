@@ -21,7 +21,7 @@ install: clean
 	go get google.golang.org/grpc
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.10.0
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
 	go install github.com/alta/protopatch/cmd/protoc-gen-go-patch@latest
 
@@ -49,3 +49,7 @@ down:
 	docker volume prune -f
 
 restart: down up
+
+cert_generate:
+	#openssl req -newkey rsa -x509 -sha256 -days 3650 -nodes -out ${PROJECT_DIR}/configs/ssl/crt.pem -keyout ${PROJECT_DIR}/configs/ssl/private.key.pem
+	openssl rsa -in ${PROJECT_DIR}/configs/ssl/private.key.pem -outform PEM -pubout -out ${PROJECT_DIR}/configs/ssl/public.key.pem
