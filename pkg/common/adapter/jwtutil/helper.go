@@ -45,18 +45,18 @@ func NewFxHelper(
 		return nil, err
 	}
 
-	return &jwtHelper{
+	return &helper{
 		publicKey:  publicKey,
 		privateKey: privateKey,
 	}, nil
 }
 
-type jwtHelper struct {
+type helper struct {
 	publicKey  *rsa.PublicKey
 	privateKey *rsa.PrivateKey
 }
 
-func (h *jwtHelper) Parse(token string, claims Claims) error {
+func (h *helper) Parse(token string, claims Claims) error {
 	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
 		return h.publicKey, nil
 	})
@@ -64,14 +64,10 @@ func (h *jwtHelper) Parse(token string, claims Claims) error {
 		return err
 	}
 
-	err = claims.Valid()
-	if err != nil {
-		return err
-	}
-	return nil
+	return claims.Valid()
 }
 
-func (h *jwtHelper) CreateToken(claims Claims) (string, error) {
+func (h *helper) CreateToken(claims Claims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	return token.SignedString(h.privateKey)
 }

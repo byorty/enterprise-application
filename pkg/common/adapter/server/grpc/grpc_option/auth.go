@@ -2,7 +2,6 @@ package grpc_option
 
 import (
 	"context"
-	"github.com/byorty/enterprise-application/pkg/common/adapter/auth"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/ctxutil"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/jwtutil"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
@@ -29,7 +28,7 @@ func NewFxAuthOption(
 					})
 					l.Debug("guest session")
 				} else {
-					claims := new(auth.SessionClaims)
+					claims := new(jwtutil.SessionClaims)
 					err = jwtHelper.Parse(token, claims)
 					if err != nil {
 						l.Error(err)

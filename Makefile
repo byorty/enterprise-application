@@ -51,5 +51,5 @@ down:
 restart: down up
 
 cert_generate:
-	#openssl req -newkey rsa -x509 -sha256 -days 3650 -nodes -out ${PROJECT_DIR}/configs/ssl/crt.pem -keyout ${PROJECT_DIR}/configs/ssl/private.key.pem
+	openssl req -newkey rsa -x509 -sha256 -days 3650 -nodes -out ${PROJECT_DIR}/configs/ssl/crt.pem -keyout ${PROJECT_DIR}/configs/ssl/private.key.pem
 	openssl rsa -in ${PROJECT_DIR}/configs/ssl/private.key.pem -outform PEM -pubout -out ${PROJECT_DIR}/configs/ssl/public.key.pem

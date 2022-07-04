@@ -87,3 +87,32 @@ func (s *JwtHelperSuite) TestAll() {
 	err = s.helper.Parse(token, claims)
 	s.Nil(err)
 }
+
+func (s *JwtHelperSuite) TestConstructor() {
+	reader := strings.NewReader(fmt.Sprintf(`
+ssl:
+  private_key_file: ""
+  public_key_file: ""
+`))
+
+	provider, err := application.NewProviderByOptions(config.Source(reader))
+	s.Nil(err)
+
+	s.helper, err = jwtutil.NewFxHelper(provider)
+	s.NotNil(err)
+
+	dir, err := os.Getwd()
+	s.Nil(err)
+
+	reader = strings.NewReader(fmt.Sprintf(`
+ssl:
+ private_key_file: %s/private.key.pem
+ public_key_file: ""
+`, dir))
+
+	provider, err = application.NewProviderByOptions(config.Source(reader))
+	s.Nil(err)
+
+	s.helper, err = jwtutil.NewFxHelper(provider)
+	s.NotNil(err)
+}
