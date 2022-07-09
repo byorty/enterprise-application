@@ -6,8 +6,10 @@ import (
 )
 
 const (
-	Session = "session"
-	User    = "user"
+	Session     = "session"
+	User        = "user"
+	UserProduct = "user_product"
+	Order       = "order"
 )
 
 var (
@@ -21,7 +23,7 @@ func Set(ctx context.Context, key string, value interface{}) context.Context {
 func Get[T any](ctx context.Context, key string) (T, error) {
 	v, ok := ctx.Value(key).(T)
 	if !ok {
-		return nil, ErrNotFound
+		return v, ErrNotFound
 	}
 
 	return v, nil

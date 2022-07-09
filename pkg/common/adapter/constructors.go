@@ -3,7 +3,6 @@ package commonadap
 import (
 	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/auth"
-	"github.com/byorty/enterprise-application/pkg/common/adapter/jwtutil"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/log"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc/grpc_option"
@@ -21,7 +20,7 @@ var Constructors = fx.Provide(
 	grpc_option.NewFxEnforcerOption,
 	grpc_option.NewFxValidatorOption,
 	mux_option.NewFxMarshalerOption,
-	jwtutil.NewFxHelper,
+	auth.NewFxHelper,
 	auth.NewFxRoleEnforcer,
 	//validator.NewFxMap,
 	//validator.NewFxMessage,

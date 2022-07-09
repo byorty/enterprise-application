@@ -1,10 +1,10 @@
-package jwtutil_test
+package auth_test
 
 import (
 	"fmt"
 	"github.com/Pallinder/go-randomdata"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/application"
-	"github.com/byorty/enterprise-application/pkg/common/adapter/jwtutil"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/auth"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
@@ -22,7 +22,7 @@ func TestJwtHelperSuite(t *testing.T) {
 
 type JwtHelperSuite struct {
 	suite.Suite
-	helper jwtutil.Helper
+	helper auth.Helper
 }
 
 func (s *JwtHelperSuite) SetupSuite() {
@@ -38,16 +38,16 @@ ssl:
 	provider, err := application.NewProviderByOptions(config.Source(reader))
 	s.Nil(err)
 
-	s.helper, err = jwtutil.NewFxHelper(provider)
+	s.helper, err = auth.NewFxHelper(provider)
 	s.Nil(err)
 }
 
 func (s *JwtHelperSuite) TestAll() {
-	claims := &jwtutil.SessionClaims{}
+	claims := &auth.SessionClaims{}
 	err := s.helper.Parse(randomdata.Alphanumeric(5), claims)
 	s.Contains(err.Error(), "token contains an invalid number of segments")
 
-	claims = &jwtutil.SessionClaims{
+	claims = &auth.SessionClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(-1 * time.Hour).Unix(),
 		},
@@ -98,7 +98,7 @@ ssl:
 	provider, err := application.NewProviderByOptions(config.Source(reader))
 	s.Nil(err)
 
-	s.helper, err = jwtutil.NewFxHelper(provider)
+	s.helper, err = auth.NewFxHelper(provider)
 	s.NotNil(err)
 
 	dir, err := os.Getwd()
@@ -113,6 +113,6 @@ ssl:
 	provider, err = application.NewProviderByOptions(config.Source(reader))
 	s.Nil(err)
 
-	s.helper, err = jwtutil.NewFxHelper(provider)
+	s.helper, err = auth.NewFxHelper(provider)
 	s.NotNil(err)
 }

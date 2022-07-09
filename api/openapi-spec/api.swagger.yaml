@@ -14,27 +14,6 @@ consumes:
 produces:
     - application/json
 paths:
-    /v1/orders:
-        post:
-            summary: Создание заказа
-            operationId: OrderService_Create
-            responses:
-                "200":
-                    description: A successful response.
-                    schema:
-                        $ref: '#/definitions/Order'
-                default:
-                    description: An unexpected error response.
-                    schema:
-                        $ref: '#/definitions/Status'
-            parameters:
-                - name: body
-                  in: body
-                  required: true
-                  schema:
-                    $ref: '#/definitions/CreateOrderRequest'
-            tags:
-                - OrderService
     /v1/orders/{order_uuid}:
         post:
             summary: Оплата заказа
@@ -145,6 +124,31 @@ paths:
                   in: path
                   required: true
                   type: string
+            tags:
+                - UserService
+    /v1/users/{user_uuid}/orders:
+        post:
+            summary: Создание заказа
+            operationId: UserService_CreateOrder
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/Order'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: user_uuid
+                  in: path
+                  required: true
+                  type: string
+                - name: params
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CreateOrderRequestParams'
             tags:
                 - UserService
     /v1/users/{user_uuid}/products:
@@ -262,7 +266,7 @@ definitions:
                 format: double
             status:
                 $ref: '#/definitions/OrderStatus'
-    CreateOrderRequest:
+    CreateOrderRequestParams:
         type: object
         properties:
             address:
@@ -294,6 +298,8 @@ definitions:
                     $ref: '#/definitions/UserProduct'
             status:
                 $ref: '#/definitions/OrderStatus'
+            user_uuid:
+                type: string
             uuid:
                 type: string
     OrderStatus:

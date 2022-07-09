@@ -6,6 +6,7 @@ import (
 )
 
 type OrderService interface {
-	Create(ctx context.Context, request *pbv1.CreateOrderRequest) (*pbv1.Order, error)
+	Create(ctx context.Context, userUUID string, params *pbv1.CreateOrderRequestParams) (*pbv1.Order, error)
 	Checkout(ctx context.Context, orderUUID string, params *pbv1.CheckoutOrderRequestParams) (*pbv1.Order, error)
+	GetByUUID(ctx context.Context, orderUUID string) (*pbv1.Order, error)
 }

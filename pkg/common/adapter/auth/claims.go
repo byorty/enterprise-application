@@ -1,4 +1,4 @@
-package jwtutil
+package auth
 
 import (
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"

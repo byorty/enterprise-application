@@ -15,15 +15,19 @@ func NewFxUserRightsEnforcer(
 ) auth.RightsEnforcerDescriptorOut {
 	return auth.RightsEnforcerDescriptorOut{
 		Descriptor: auth.RightsEnforcerDescriptor{
-			Name: "user_uuid",
-			RightsEnforcer: &userRightsEnforcer{
-				userService: userService,
-			},
+			Name:           "user_uuid",
+			RightsEnforcer: NewUserRightsEnforcer(userService),
 		},
 	}
 }
 
-var _ auth.RightsEnforcer = (*userRightsEnforcer)(nil)
+func NewUserRightsEnforcer(
+	userService usersrv.UserService,
+) auth.RightsEnforcer {
+	return &userRightsEnforcer{
+		userService: userService,
+	}
+}
 
 type userRightsEnforcer struct {
 	userService usersrv.UserService
@@ -33,6 +37,10 @@ func (r userRightsEnforcer) Enforce(ctx context.Context, session pbv1.Session, v
 	user, err := r.userService.GetByUUID(ctx, value.String())
 	if err != nil {
 		return nil, err
+	}
+
+	if user.Status != pbv1.UserStatusActive {
+		return nil, grpc.ErrSessionHasNotPermissions
 	}
 
 	if session.Uuid != user.Uuid {

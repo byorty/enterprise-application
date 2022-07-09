@@ -38,7 +38,7 @@ func NewFxEnforcerOption(
 					return nil, grpc.ErrPermissionDenied(grpc.ErrSessionNotFound)
 				}
 
-				ok, err = roleEnforcer.Enforce(session, methodDescriptor.Object, methodDescriptor.Operation)
+				ok, err = roleEnforcer.Enforce(session, methodDescriptor.Role, methodDescriptor.Permission)
 				if !ok {
 					l.Error(err)
 					return nil, grpc.ErrPermissionDenied(grpc.ErrSessionHasNotPermissions)

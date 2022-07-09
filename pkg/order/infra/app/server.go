@@ -25,10 +25,6 @@ type server struct {
 	orderService ordersrv.OrderService
 }
 
-func (s *server) Create(ctx context.Context, request *pbv1.CreateOrderRequest) (*pbv1.Order, error) {
-	return s.orderService.Create(ctx, request)
-}
-
 func (s *server) Checkout(ctx context.Context, request *pbv1.CheckoutOrderRequest) (*pbv1.Order, error) {
 	return s.orderService.Checkout(ctx, request.OrderUuid, request.Params)
 }

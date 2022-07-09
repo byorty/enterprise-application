@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
-	Create(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*Order, error)
 	Checkout(ctx context.Context, in *CheckoutOrderRequest, opts ...grpc.CallOption) (*Order, error)
 }
 
@@ -32,15 +31,6 @@ type orderServiceClient struct {
 
 func NewOrderServiceClient(cc grpc.ClientConnInterface) OrderServiceClient {
 	return &orderServiceClient{cc}
-}
-
-func (c *orderServiceClient) Create(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*Order, error) {
-	out := new(Order)
-	err := c.cc.Invoke(ctx, "/pb.v1.OrderService/Create", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *orderServiceClient) Checkout(ctx context.Context, in *CheckoutOrderRequest, opts ...grpc.CallOption) (*Order, error) {
@@ -56,7 +46,6 @@ func (c *orderServiceClient) Checkout(ctx context.Context, in *CheckoutOrderRequ
 // All implementations should embed UnimplementedOrderServiceServer
 // for forward compatibility
 type OrderServiceServer interface {
-	Create(context.Context, *CreateOrderRequest) (*Order, error)
 	Checkout(context.Context, *CheckoutOrderRequest) (*Order, error)
 }
 
@@ -64,9 +53,6 @@ type OrderServiceServer interface {
 type UnimplementedOrderServiceServer struct {
 }
 
-func (UnimplementedOrderServiceServer) Create(context.Context, *CreateOrderRequest) (*Order, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
-}
 func (UnimplementedOrderServiceServer) Checkout(context.Context, *CheckoutOrderRequest) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Checkout not implemented")
 }
@@ -80,24 +66,6 @@ type UnsafeOrderServiceServer interface {
 
 func RegisterOrderServiceServer(s grpc.ServiceRegistrar, srv OrderServiceServer) {
 	s.RegisterService(&OrderService_ServiceDesc, srv)
-}
-
-func _OrderService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrderRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderServiceServer).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.v1.OrderService/Create",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).Create(ctx, req.(*CreateOrderRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _OrderService_Checkout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -125,10 +93,6 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.v1.OrderService",
 	HandlerType: (*OrderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Create",
-			Handler:    _OrderService_Create_Handler,
-		},
 		{
 			MethodName: "Checkout",
 			Handler:    _OrderService_Checkout_Handler,

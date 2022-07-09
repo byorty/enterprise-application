@@ -24,10 +24,11 @@ enum OrderStatus {
 
 message Order {
     string uuid = 1;
-    double amount = 2;
-    string address = 3;
-    OrderStatus status = 4;
-    repeated UserProduct products = 5;
+    string user_uuid = 2;
+    double amount = 3;
+    string address = 4;
+    OrderStatus status = 5;
+    repeated UserProduct products = 6;
     google.protobuf.Timestamp created_at = 7;
     google.protobuf.Timestamp delivered_at = 8;
 }

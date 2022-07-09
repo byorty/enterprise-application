@@ -8,9 +8,9 @@ import (
 )
 
 type MethodDescriptor struct {
-	Method    interface{}
-	Object    pbv1.PermissionObject
-	Operation pbv1.PermissionOperation
+	Method     interface{}
+	Role       pbv1.Role
+	Permission pbv1.Permission
 }
 
 func (m *MethodDescriptor) GetName() (string, error) {

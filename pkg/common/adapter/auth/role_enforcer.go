@@ -21,7 +21,7 @@ func NewFxRoleEnforcer(
 	logger log.Logger,
 	configProvider application.Provider,
 ) (RoleEnforcer, error) {
-	var cfg Config
+	var cfg RoleEnforcerConfig
 	err := configProvider.PopulateByKey("enforcer", &cfg)
 	if err != nil {
 		return nil, err

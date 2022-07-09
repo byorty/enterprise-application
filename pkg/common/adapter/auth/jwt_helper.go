@@ -1,4 +1,4 @@
-package jwtutil
+package auth
 
 import (
 	"crypto/rsa"
@@ -19,7 +19,7 @@ type Helper interface {
 func NewFxHelper(
 	provider application.Provider,
 ) (Helper, error) {
-	var cfg Config
+	var cfg SslConfig
 	err := provider.PopulateByKey("ssl", &cfg)
 	if err != nil {
 		return nil, err

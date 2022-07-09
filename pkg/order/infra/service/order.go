@@ -24,9 +24,10 @@ type orderService struct {
 	productService productsrv.ProductService
 }
 
-func (s *orderService) Create(ctx context.Context, request *pbv1.CreateOrderRequest) (*pbv1.Order, error) {
+func (s *orderService) Create(ctx context.Context, userUUID string, request *pbv1.CreateOrderRequestParams) (*pbv1.Order, error) {
 	order := &pbv1.Order{
 		Uuid:        uuid.NewString(),
+		UserUuid:    userUUID,
 		Address:     request.Address,
 		Status:      pbv1.OrderStatusCreated,
 		Products:    request.Products,
@@ -58,6 +59,15 @@ func (s *orderService) Checkout(ctx context.Context, orderUUID string, params *p
 	}
 
 	order.Status = params.Status
+
+	return order, nil
+}
+
+func (s *orderService) GetByUUID(ctx context.Context, orderUUID string) (*pbv1.Order, error) {
+	order, ok := s.orders.Get(orderUUID)
+	if !ok {
+		return nil, ordersrv.ErrOrderNotFound
+	}
 
 	return order, nil
 }

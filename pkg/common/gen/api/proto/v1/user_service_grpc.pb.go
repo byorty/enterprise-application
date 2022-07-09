@@ -27,6 +27,7 @@ type UserServiceClient interface {
 	GetUserProducts(ctx context.Context, in *GetByUserUUIDRequest, opts ...grpc.CallOption) (*UserProductsResponse, error)
 	PutProduct(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*UserProductsResponse, error)
 	ChangeProduct(ctx context.Context, in *ChangeProductRequest, opts ...grpc.CallOption) (*UserProductsResponse, error)
+	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*Order, error)
 }
 
 type userServiceClient struct {
@@ -82,6 +83,15 @@ func (c *userServiceClient) ChangeProduct(ctx context.Context, in *ChangeProduct
 	return out, nil
 }
 
+func (c *userServiceClient) CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*Order, error) {
+	out := new(Order)
+	err := c.cc.Invoke(ctx, "/pb.v1.UserService/CreateOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type UserServiceServer interface {
 	GetUserProducts(context.Context, *GetByUserUUIDRequest) (*UserProductsResponse, error)
 	PutProduct(context.Context, *PutProductRequest) (*UserProductsResponse, error)
 	ChangeProduct(context.Context, *ChangeProductRequest) (*UserProductsResponse, error)
+	CreateOrder(context.Context, *CreateOrderRequest) (*Order, error)
 }
 
 // UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
@@ -111,6 +122,9 @@ func (UnimplementedUserServiceServer) PutProduct(context.Context, *PutProductReq
 }
 func (UnimplementedUserServiceServer) ChangeProduct(context.Context, *ChangeProductRequest) (*UserProductsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeProduct not implemented")
+}
+func (UnimplementedUserServiceServer) CreateOrder(context.Context, *CreateOrderRequest) (*Order, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -214,6 +228,24 @@ func _UserService_ChangeProduct_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreateOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.v1.UserService/CreateOrder",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreateOrder(ctx, req.(*CreateOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -240,6 +272,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangeProduct",
 			Handler:    _UserService_ChangeProduct_Handler,
+		},
+		{
+			MethodName: "CreateOrder",
+			Handler:    _UserService_CreateOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
