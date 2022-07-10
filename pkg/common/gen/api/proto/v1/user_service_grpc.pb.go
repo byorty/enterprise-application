@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*User, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*TokenResponse, error)
+	Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*TokenResponse, error)
 	GetByUUID(ctx context.Context, in *GetByUserUUIDRequest, opts ...grpc.CallOption) (*User, error)
 	GetUserProducts(ctx context.Context, in *GetByUserUUIDRequest, opts ...grpc.CallOption) (*UserProductsResponse, error)
 	PutProduct(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*UserProductsResponse, error)
@@ -38,9 +39,18 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 	return &userServiceClient{cc}
 }
 
-func (c *userServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
+func (c *userServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*TokenResponse, error) {
+	out := new(TokenResponse)
 	err := c.cc.Invoke(ctx, "/pb.v1.UserService/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*TokenResponse, error) {
+	out := new(TokenResponse)
+	err := c.cc.Invoke(ctx, "/pb.v1.UserService/Authorize", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +106,8 @@ func (c *userServiceClient) CreateOrder(ctx context.Context, in *CreateOrderRequ
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
-	Register(context.Context, *RegisterRequest) (*User, error)
+	Register(context.Context, *RegisterRequest) (*TokenResponse, error)
+	Authorize(context.Context, *AuthorizeRequest) (*TokenResponse, error)
 	GetByUUID(context.Context, *GetByUserUUIDRequest) (*User, error)
 	GetUserProducts(context.Context, *GetByUserUUIDRequest) (*UserProductsResponse, error)
 	PutProduct(context.Context, *PutProductRequest) (*UserProductsResponse, error)
@@ -108,8 +119,11 @@ type UserServiceServer interface {
 type UnimplementedUserServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) Register(context.Context, *RegisterRequest) (*User, error) {
+func (UnimplementedUserServiceServer) Register(context.Context, *RegisterRequest) (*TokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedUserServiceServer) Authorize(context.Context, *AuthorizeRequest) (*TokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Authorize not implemented")
 }
 func (UnimplementedUserServiceServer) GetByUUID(context.Context, *GetByUserUUIDRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByUUID not implemented")
@@ -152,6 +166,24 @@ func _UserService_Register_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).Register(ctx, req.(*RegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_Authorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Authorize(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.v1.UserService/Authorize",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Authorize(ctx, req.(*AuthorizeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -256,6 +288,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Register",
 			Handler:    _UserService_Register_Handler,
+		},
+		{
+			MethodName: "Authorize",
+			Handler:    _UserService_Authorize_Handler,
 		},
 		{
 			MethodName: "GetByUUID",

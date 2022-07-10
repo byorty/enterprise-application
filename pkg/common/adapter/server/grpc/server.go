@@ -74,14 +74,18 @@ func NewFxServer(
 	sort.Sort(ByPriority(in.MuxMiddlewares))
 	sort.Sort(ByPriority(in.GrpcMiddlewares))
 
-	interceptors := make([]grpc.UnaryServerInterceptor, len(in.GrpcMiddlewares))
-	for i, middleware := range in.GrpcMiddlewares {
-		interceptors[i] = middleware.GrpcOption
+	interceptors := make([]grpc.UnaryServerInterceptor, 0)
+	for _, middleware := range in.GrpcMiddlewares {
+		if middleware.GrpcOption != nil {
+			interceptors = append(interceptors, middleware.GrpcOption)
+		}
 	}
 
-	serverMuxOptions := make([]runtime.ServeMuxOption, len(in.MuxMiddlewares))
-	for i, middleware := range in.MuxMiddlewares {
-		serverMuxOptions[i] = middleware.MuxOption
+	serverMuxOptions := make([]runtime.ServeMuxOption, 0)
+	for _, middleware := range in.MuxMiddlewares {
+		if middleware.MuxOption != nil {
+			serverMuxOptions = append(serverMuxOptions, middleware.MuxOption)
+		}
 	}
 
 	srv := &server{

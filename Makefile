@@ -50,6 +50,9 @@ down:
 
 restart: down up
 
+run: build_apps
+	docker-compose -p $(PROJECT_NAME) -f $(DOCKER_COMPOSE) up --build --force-recreate
+
 cert_generate:
 	openssl req -newkey rsa -x509 -sha256 -days 3650 -nodes -out ${PROJECT_DIR}/configs/ssl/crt.pem -keyout ${PROJECT_DIR}/configs/ssl/private.key.pem
 	openssl rsa -in ${PROJECT_DIR}/configs/ssl/private.key.pem -outform PEM -pubout -out ${PROJECT_DIR}/configs/ssl/public.key.pem

@@ -5,6 +5,7 @@ services:
     image: nginx:alpine
     volumes:
       - ${PROJECT_DIR}/deployments/nginx.conf:/etc/nginx/conf.d/default.conf:delegated
+      - ${PROJECT_DIR}/configs/ssl:/etc/nginx/ssl/:delegated
     ports:
       - "80:80"
       - "443:443"

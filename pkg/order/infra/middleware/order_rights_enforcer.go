@@ -15,15 +15,19 @@ func NewFxOrderRightsEnforcer(
 ) auth.RightsEnforcerDescriptorOut {
 	return auth.RightsEnforcerDescriptorOut{
 		Descriptor: auth.RightsEnforcerDescriptor{
-			Name: "order_uuid",
-			RightsEnforcer: &orderRightsEnforcer{
-				orderService: orderService,
-			},
+			Name:           "order_uuid",
+			RightsEnforcer: NewOrderRightsEnforcer(orderService),
 		},
 	}
 }
 
-var _ auth.RightsEnforcer = (*orderRightsEnforcer)(nil)
+func NewOrderRightsEnforcer(
+	orderService ordersrv.OrderService,
+) auth.RightsEnforcer {
+	return &orderRightsEnforcer{
+		orderService: orderService,
+	}
+}
 
 type orderRightsEnforcer struct {
 	orderService ordersrv.OrderService
@@ -32,7 +36,7 @@ type orderRightsEnforcer struct {
 func (r orderRightsEnforcer) Enforce(ctx context.Context, session pbv1.Session, value protoreflect.Value) (context.Context, error) {
 	order, err := r.orderService.GetByUUID(ctx, value.String())
 	if err != nil {
-		return nil, err
+		return nil, grpc.ErrSessionNotOwnEntity
 	}
 
 	if order.UserUuid != session.Uuid {

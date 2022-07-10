@@ -7,6 +7,7 @@ import (
 	productsrv "github.com/byorty/enterprise-application/pkg/product/domain/service"
 	usersrv "github.com/byorty/enterprise-application/pkg/user/domain/service"
 	"github.com/google/uuid"
+	"sort"
 )
 
 func NewFxUserProductService(
@@ -26,14 +27,29 @@ type userProductService struct {
 	userProducts   collection.Map[string, collection.Slice[*pbv1.UserProduct]]
 }
 
-func (s *userProductService) GetProductsByUserUUID(ctx context.Context, userUUID string) ([]*pbv1.UserProduct, error) {
-	_, err := s.userService.GetByUUID(ctx, userUUID)
-	if err != nil {
-		return nil, err
+func (s *userProductService) GetAllByFilter(ctx context.Context, params pbv1.GetUserProductRequestParams) ([]*pbv1.UserProduct, error) {
+	userProducts := collection.NewSlice[*pbv1.UserProduct]()
+	for userUUID, products := range s.userProducts.Entries() {
+		if len(params.UserUuidIn) > 0 {
+			x := sort.SearchStrings(params.UserUuidIn, userUUID)
+			if (len(params.UserUuidIn) > x && params.UserUuidIn[x] == userUUID) == false {
+				continue
+			}
+		}
+
+		for _, product := range products.Entries() {
+			if len(params.UuidIn) > 0 {
+				y := sort.SearchStrings(params.UuidIn, product.Uuid)
+				if len(params.UuidIn) > y && params.UuidIn[y] == product.Uuid {
+					userProducts.Add(product)
+				}
+			} else {
+				userProducts.Add(product)
+			}
+		}
 	}
 
-	userProducts, ok := s.userProducts.Get(userUUID)
-	if !ok {
+	if userProducts.Len() == 0 {
 		return nil, usersrv.ErrUserProductNotFound
 	}
 

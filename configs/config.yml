@@ -9,6 +9,11 @@ enforcer:
   policy_file: ${PROJECT_DIR}/configs/enforcer/policy.csv
 
 ssl:
-  cert_file: ${PROJECT_DIR}/ssl/crt.pem
-  private_key_file: ${PROJECT_DIR}/ssl/private.key.pem
-  public_key_file: ${PROJECT_DIR}/ssl/public.key.pem
+  cert_file: ${PROJECT_DIR}/configs/ssl/crt.pem
+  private_key_file: ${PROJECT_DIR}/configs/ssl/private.key.pem
+  public_key_file: ${PROJECT_DIR}/configs/ssl/public.key.pem
+
+session:
+  audience: Enterprise Application
+  issuer: Solomonov
+  duration: 168h

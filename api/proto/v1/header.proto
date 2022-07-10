@@ -10,7 +10,17 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
         title: "Enterprise Application API";
         version: "1.0";
     };
-    schemes: HTTP;
+    schemes: HTTPS;
+    security_definitions: {
+        security: {
+            key: "Bearer"
+            value: {
+                type: TYPE_API_KEY;
+                in: IN_HEADER;
+                name: "Authorization"
+            }
+        };
+    };
     host: "enterprise.application.local";
     consumes: "application/json";
     produces: "application/json";

@@ -18,6 +18,13 @@ func NewFxOrderServiceServer(
 		},
 		GRPCRegistrar:        pbv1.RegisterOrderServiceServer,
 		GRPCGatewayRegistrar: pbv1.RegisterOrderServiceHandlerFromEndpoint,
+		MethodDescriptors: []grpc.MethodDescriptor{
+			{
+				Method:     (*server).Checkout,
+				Role:       pbv1.RoleOrder,
+				Permission: pbv1.PermissionWrite,
+			},
+		},
 	}
 }
 

@@ -11,39 +11,36 @@ import (
 )
 
 func NewFxUserProductRightsEnforcer(
-	userService usersrv.UserService,
 	userProductService usersrv.UserProductService,
 ) auth.RightsEnforcerDescriptorOut {
 	return auth.RightsEnforcerDescriptorOut{
 		Descriptor: auth.RightsEnforcerDescriptor{
-			Name: "user_product_uuid",
-			RightsEnforcer: &userProductRightsEnforcer{
-				userService:        userService,
-				userProductService: userProductService,
-			},
+			Name:           "user_product_uuid",
+			RightsEnforcer: NewUserProductRightsEnforcer(userProductService),
 		},
 	}
 }
 
-var _ auth.RightsEnforcer = (*userRightsEnforcer)(nil)
+func NewUserProductRightsEnforcer(
+	userProductService usersrv.UserProductService,
+) auth.RightsEnforcer {
+	return &userProductRightsEnforcer{
+		userProductService: userProductService,
+	}
+}
 
 type userProductRightsEnforcer struct {
-	userService        usersrv.UserService
 	userProductService usersrv.UserProductService
 }
 
 func (r userProductRightsEnforcer) Enforce(ctx context.Context, session pbv1.Session, value protoreflect.Value) (context.Context, error) {
-	userProductUUID := value.String()
-	userProducts, err := r.userProductService.GetProductsByUserUUID(ctx, session.Uuid)
-	if err != nil {
-		return nil, err
+	userProducts, err := r.userProductService.GetAllByFilter(ctx, pbv1.GetUserProductRequestParams{
+		UuidIn:     []string{value.String()},
+		UserUuidIn: []string{session.Uuid},
+	})
+	if err != nil || len(userProducts) == 0 {
+		return nil, grpc.ErrSessionNotOwnEntity
 	}
 
-	for _, userProduct := range userProducts {
-		if userProduct.Uuid == userProductUUID {
-			return ctxutil.Set(ctx, ctxutil.UserProduct, userProduct), nil
-		}
-	}
-
-	return nil, grpc.ErrSessionNotOwnEntity
+	return ctxutil.Set(ctx, ctxutil.UserProduct, userProducts[0]), nil
 }

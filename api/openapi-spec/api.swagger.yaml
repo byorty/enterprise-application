@@ -8,7 +8,7 @@ tags:
     - name: UserService
 host: enterprise.application.local
 schemes:
-    - http
+    - https
 consumes:
     - application/json
 produces:
@@ -224,6 +224,27 @@ paths:
                     $ref: '#/definitions/ChangeProductRequestParams'
             tags:
                 - UserService
+    /v1/users/authorize:
+        post:
+            summary: Авторизация пользователя
+            operationId: UserService_Authorize
+            responses:
+                "200":
+                    description: A successful response.
+                    schema:
+                        $ref: '#/definitions/TokenResponse'
+                default:
+                    description: An unexpected error response.
+                    schema:
+                        $ref: '#/definitions/Status'
+            parameters:
+                - name: body
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/AuthorizeRequest'
+            tags:
+                - UserService
     /v1/users/register:
         post:
             summary: Регистрация пользователя
@@ -232,7 +253,7 @@ paths:
                 "200":
                     description: A successful response.
                     schema:
-                        $ref: '#/definitions/User'
+                        $ref: '#/definitions/TokenResponse'
                 default:
                     description: An unexpected error response.
                     schema:
@@ -252,6 +273,13 @@ definitions:
             '@type':
                 type: string
         additionalProperties: {}
+    AuthorizeRequest:
+        type: object
+        properties:
+            phone_number:
+                type: string
+        required:
+            - phone_number
     ChangeProductRequestParams:
         type: object
         properties:
@@ -410,6 +438,11 @@ definitions:
                     $ref: '#/definitions/Any'
             message:
                 type: string
+    TokenResponse:
+        type: object
+        properties:
+            token:
+                type: string
     User:
         type: object
         properties:
@@ -462,3 +495,8 @@ definitions:
             - USER_STATUS_ACTIVE
             - USER_STATUS_BLOCKED
         default: USER_STATUS_UNSPECIFIED
+securityDefinitions:
+    Bearer:
+        type: apiKey
+        name: Authorization
+        in: header

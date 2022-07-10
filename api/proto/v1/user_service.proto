@@ -12,13 +12,22 @@ import "api/proto/v1/order.proto";
 import "api/proto/v1/user.proto";
 
 service UserService {
-    rpc Register(RegisterRequest) returns (User) {
+    rpc Register(RegisterRequest) returns (TokenResponse) {
         option (google.api.http) = {
             post: "/v1/users/register";
             body: "*";
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Регистрация пользователя";
+        };
+    };
+    rpc Authorize(AuthorizeRequest) returns (TokenResponse) {
+        option (google.api.http) = {
+            post: "/v1/users/authorize";
+            body: "*";
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Авторизация пользователя";
         };
     };
     rpc GetByUUID(GetByUserUUIDRequest) returns (User) {
@@ -75,6 +84,19 @@ message RegisterRequest {
     string phone_number = 1;
 }
 
+message TokenResponse {
+    string token = 1;
+}
+
+message AuthorizeRequest {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+        json_schema: {
+            required: ["phone_number"]
+        }
+    };
+    string phone_number = 1;
+}
+
 message GetByUserUUIDRequest {
     string user_uuid = 1;
 }
@@ -82,6 +104,12 @@ message GetByUserUUIDRequest {
 message UserProductsResponse {
     repeated UserProduct products = 1;
     uint32 count = 2;
+}
+
+message GetUserProductRequestParams {
+    repeated string uuid_in = 1;
+    repeated string user_uuid_in = 2;
+    repeated string product_uuid_in = 3;
 }
 
 message PutProductRequest {

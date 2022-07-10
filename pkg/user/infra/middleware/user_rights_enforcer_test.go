@@ -16,7 +16,7 @@ import (
 	"testing"
 )
 
-func TestUserRightsEnforcerSuiteSuite(t *testing.T) {
+func TestUserRightsEnforcerSuite(t *testing.T) {
 	suite.Run(t, new(UserRightsEnforcerSuite))
 }
 

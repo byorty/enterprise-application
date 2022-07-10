@@ -33,5 +33,5 @@ func (m Map[T]) Get(message protoreflect.Message, field protoreflect.FieldDescri
 		return value, nil
 	}
 
-	return nil, ErrKeyNotFound
+	return value, ErrKeyNotFound
 }

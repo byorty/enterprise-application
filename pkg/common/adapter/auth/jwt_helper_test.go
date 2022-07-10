@@ -16,16 +16,16 @@ import (
 	"time"
 )
 
-func TestJwtHelperSuite(t *testing.T) {
-	suite.Run(t, new(JwtHelperSuite))
+func TestJWTHelperSuite(t *testing.T) {
+	suite.Run(t, new(JWTHelperSuite))
 }
 
-type JwtHelperSuite struct {
+type JWTHelperSuite struct {
 	suite.Suite
-	helper auth.Helper
+	helper auth.JWTHelper
 }
 
-func (s *JwtHelperSuite) SetupSuite() {
+func (s *JWTHelperSuite) SetupSuite() {
 	dir, err := os.Getwd()
 	s.Nil(err)
 
@@ -38,11 +38,11 @@ ssl:
 	provider, err := application.NewProviderByOptions(config.Source(reader))
 	s.Nil(err)
 
-	s.helper, err = auth.NewFxHelper(provider)
+	s.helper, err = auth.NewFxJWTHelper(provider)
 	s.Nil(err)
 }
 
-func (s *JwtHelperSuite) TestAll() {
+func (s *JWTHelperSuite) TestAll() {
 	claims := &auth.SessionClaims{}
 	err := s.helper.Parse(randomdata.Alphanumeric(5), claims)
 	s.Contains(err.Error(), "token contains an invalid number of segments")
@@ -88,7 +88,7 @@ func (s *JwtHelperSuite) TestAll() {
 	s.Nil(err)
 }
 
-func (s *JwtHelperSuite) TestConstructor() {
+func (s *JWTHelperSuite) TestConstructor() {
 	reader := strings.NewReader(fmt.Sprintf(`
 ssl:
   private_key_file: ""
@@ -98,7 +98,7 @@ ssl:
 	provider, err := application.NewProviderByOptions(config.Source(reader))
 	s.Nil(err)
 
-	s.helper, err = auth.NewFxHelper(provider)
+	s.helper, err = auth.NewFxJWTHelper(provider)
 	s.NotNil(err)
 
 	dir, err := os.Getwd()
@@ -113,6 +113,6 @@ ssl:
 	provider, err = application.NewProviderByOptions(config.Source(reader))
 	s.Nil(err)
 
-	s.helper, err = auth.NewFxHelper(provider)
+	s.helper, err = auth.NewFxJWTHelper(provider)
 	s.NotNil(err)
 }

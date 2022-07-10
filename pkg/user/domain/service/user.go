@@ -6,6 +6,7 @@ import (
 )
 
 type UserService interface {
-	Register(ctx context.Context, phoneNumber string) (*pbv1.User, error)
+	Register(ctx context.Context, phoneNumber string) (*pbv1.TokenResponse, error)
+	Authorize(ctx context.Context, phoneNumber string) (*pbv1.TokenResponse, error)
 	GetByUUID(ctx context.Context, uuid string) (*pbv1.User, error)
 }

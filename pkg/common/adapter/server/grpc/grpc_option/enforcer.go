@@ -8,18 +8,22 @@ import (
 	"github.com/byorty/enterprise-application/pkg/common/adapter/protoutil"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
+	"go.uber.org/fx"
 	gRPC "google.golang.org/grpc"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
-func NewFxEnforcerOption(
-	logger log.Logger,
-	roleEnforcer auth.RoleEnforcer,
-	methodDescriptorMap grpc.MethodDescriptorMap,
-	rightsEnforcerDescriptors []auth.RightsEnforcerDescriptor,
-) grpc.MiddlewareOut {
+type EnforcerOptionIn struct {
+	fx.In
+	Logger                    log.Logger
+	RoleEnforcer              auth.RoleEnforcer
+	MethodDescriptorMap       grpc.MethodDescriptorMap
+	RightsEnforcerDescriptors []auth.RightsEnforcerDescriptor `optional:"true"`
+}
+
+func NewFxEnforcerOption(in EnforcerOptionIn) grpc.MiddlewareOut {
 	rightsEnforcers := protoutil.NewMap[auth.RightsEnforcer]()
-	for _, descriptor := range rightsEnforcerDescriptors {
+	for _, descriptor := range in.RightsEnforcerDescriptors {
 		rightsEnforcers.Set(descriptor.Name, descriptor.RightsEnforcer)
 	}
 
@@ -27,8 +31,8 @@ func NewFxEnforcerOption(
 		GrpcMiddleware: grpc.Middleware{
 			Priority: 98,
 			GrpcOption: func(ctx context.Context, req interface{}, info *gRPC.UnaryServerInfo, handler gRPC.UnaryHandler) (resp interface{}, err error) {
-				l := logger.WithCtx(ctx, "middleware", "enforcer")
-				methodDescriptor, ok := methodDescriptorMap[info.FullMethod]
+				l := in.Logger.WithCtx(ctx, "middleware", "enforcer")
+				methodDescriptor, ok := in.MethodDescriptorMap[info.FullMethod]
 				if !ok {
 					return nil, grpc.ErrUnauthenticated(grpc.ErrMethodDescriptorNotFound)
 				}
@@ -38,7 +42,7 @@ func NewFxEnforcerOption(
 					return nil, grpc.ErrPermissionDenied(grpc.ErrSessionNotFound)
 				}
 
-				ok, err = roleEnforcer.Enforce(session, methodDescriptor.Role, methodDescriptor.Permission)
+				ok, err = in.RoleEnforcer.Enforce(session, methodDescriptor.Role, methodDescriptor.Permission)
 				if !ok {
 					l.Error(err)
 					return nil, grpc.ErrPermissionDenied(grpc.ErrSessionHasNotPermissions)

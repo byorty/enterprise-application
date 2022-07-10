@@ -27,12 +27,37 @@ func NewFxUserServiceServer(
 			{
 				Method:     (*server).Register,
 				Role:       pbv1.RoleUser,
-				Permission: pbv1.PermissionRead,
+				Permission: pbv1.PermissionWrite,
+			},
+			{
+				Method:     (*server).Authorize,
+				Role:       pbv1.RoleUser,
+				Permission: pbv1.PermissionWrite,
 			},
 			{
 				Method:     (*server).GetByUUID,
 				Role:       pbv1.RoleUser,
 				Permission: pbv1.PermissionRead,
+			},
+			{
+				Method:     (*server).GetUserProducts,
+				Role:       pbv1.RoleUser,
+				Permission: pbv1.PermissionRead,
+			},
+			{
+				Method:     (*server).PutProduct,
+				Role:       pbv1.RoleUserProduct,
+				Permission: pbv1.PermissionRead,
+			},
+			{
+				Method:     (*server).ChangeProduct,
+				Role:       pbv1.RoleUserProduct,
+				Permission: pbv1.PermissionRead,
+			},
+			{
+				Method:     (*server).CreateOrder,
+				Role:       pbv1.RoleOrder,
+				Permission: pbv1.PermissionWrite,
 			},
 		},
 	}
@@ -44,8 +69,12 @@ type server struct {
 	orderService       ordersrv.OrderService
 }
 
-func (s server) Register(ctx context.Context, request *pbv1.RegisterRequest) (*pbv1.User, error) {
+func (s server) Register(ctx context.Context, request *pbv1.RegisterRequest) (*pbv1.TokenResponse, error) {
 	return s.userService.Register(ctx, request.PhoneNumber)
+}
+
+func (s server) Authorize(ctx context.Context, request *pbv1.AuthorizeRequest) (*pbv1.TokenResponse, error) {
+	return s.userService.Authorize(ctx, request.PhoneNumber)
 }
 
 func (s server) GetByUUID(ctx context.Context, request *pbv1.GetByUserUUIDRequest) (*pbv1.User, error) {
@@ -53,7 +82,11 @@ func (s server) GetByUUID(ctx context.Context, request *pbv1.GetByUserUUIDReques
 }
 
 func (s server) GetUserProducts(ctx context.Context, request *pbv1.GetByUserUUIDRequest) (*pbv1.UserProductsResponse, error) {
-	userProducts, err := s.userProductService.GetProductsByUserUUID(ctx, request.UserUuid)
+	userProducts, err := s.userProductService.GetAllByFilter(
+		ctx,
+		pbv1.GetUserProductRequestParams{
+			UserUuidIn: []string{request.UserUuid},
+		})
 	return &pbv1.UserProductsResponse{
 		Products: userProducts,
 	}, err

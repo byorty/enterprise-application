@@ -18,23 +18,8 @@ var Constructors = fx.Provide(
 	grpc_option.NewFxPanicOption,
 	grpc_option.NewFxAuthOption,
 	grpc_option.NewFxEnforcerOption,
-	grpc_option.NewFxValidatorOption,
 	mux_option.NewFxMarshalerOption,
-	auth.NewFxHelper,
+	auth.NewFxJWTHelper,
 	auth.NewFxRoleEnforcer,
-	//validator.NewFxMap,
-	//validator.NewFxMessage,
-	//validator.NewFxUUID(
-	//	"uuid",
-	//	"order_uuid",
-	//	"product_uuid",
-	//	"user_uuid",
-	//),
-	//validator.NewFxOptionalUint32(
-	//	"offset",
-	//	"limit",
-	//),
-	//validator.NewFxRequiredUint32(
-	//	"count",
-	//),
+	auth.NewFxSessionManager,
 )

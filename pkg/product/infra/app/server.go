@@ -18,6 +18,18 @@ func NewFxProductServiceServer(
 		},
 		GRPCRegistrar:        pbv1.RegisterProductServiceServer,
 		GRPCGatewayRegistrar: pbv1.RegisterProductServiceHandlerFromEndpoint,
+		MethodDescriptors: []grpc.MethodDescriptor{
+			{
+				Method:     (*server).GetAllByFilter,
+				Role:       pbv1.RoleProduct,
+				Permission: pbv1.PermissionRead,
+			},
+			{
+				Method:     (*server).GetByUUID,
+				Role:       pbv1.RoleProduct,
+				Permission: pbv1.PermissionRead,
+			},
+		},
 	}
 }
 

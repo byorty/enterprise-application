@@ -6,8 +6,8 @@ import (
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	orderadap "github.com/byorty/enterprise-application/pkg/order/infra"
 	productsadap "github.com/byorty/enterprise-application/pkg/product/infra"
-	productapp "github.com/byorty/enterprise-application/pkg/product/infra/app"
 	useradap "github.com/byorty/enterprise-application/pkg/user/infra"
+	userapp "github.com/byorty/enterprise-application/pkg/user/infra/app"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 		productsadap.Constructors,
 		useradap.Constructors,
 		orderadap.Constructors,
-		productapp.NewFxProductServiceServer,
+		userapp.NewFxUserServiceServer,
 	)
 	app.Demonize(func(
 		server grpc.Server,

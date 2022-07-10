@@ -11,14 +11,14 @@ type Claims interface {
 	jwt.Claims
 }
 
-type Helper interface {
+type JWTHelper interface {
 	Parse(token string, claims Claims) error
 	CreateToken(claims Claims) (string, error)
 }
 
-func NewFxHelper(
+func NewFxJWTHelper(
 	provider application.Provider,
-) (Helper, error) {
+) (JWTHelper, error) {
 	var cfg SslConfig
 	err := provider.PopulateByKey("ssl", &cfg)
 	if err != nil {
