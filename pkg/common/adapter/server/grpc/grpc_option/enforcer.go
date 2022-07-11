@@ -11,6 +11,7 @@ import (
 	"go.uber.org/fx"
 	gRPC "google.golang.org/grpc"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"strings"
 )
 
 type EnforcerOptionIn struct {
@@ -18,7 +19,7 @@ type EnforcerOptionIn struct {
 	Logger                    log.Logger
 	RoleEnforcer              auth.RoleEnforcer
 	MethodDescriptorMap       grpc.MethodDescriptorMap
-	RightsEnforcerDescriptors []auth.RightsEnforcerDescriptor `optional:"true"`
+	RightsEnforcerDescriptors []auth.RightsEnforcerDescriptor `group:"rights_enforcer"`
 }
 
 func NewFxEnforcerOption(in EnforcerOptionIn) grpc.MiddlewareOut {
@@ -31,8 +32,10 @@ func NewFxEnforcerOption(in EnforcerOptionIn) grpc.MiddlewareOut {
 		GrpcMiddleware: grpc.Middleware{
 			Priority: 98,
 			GrpcOption: func(ctx context.Context, req interface{}, info *gRPC.UnaryServerInfo, handler gRPC.UnaryHandler) (resp interface{}, err error) {
-				l := in.Logger.WithCtx(ctx, "middleware", "enforcer")
-				methodDescriptor, ok := in.MethodDescriptorMap[info.FullMethod]
+				logger := in.Logger.WithCtx(ctx, "middleware", "enforcer")
+				methodNameParts := strings.Split(info.FullMethod, "/")
+				methodName := methodNameParts[len(methodNameParts)-1]
+				methodDescriptor, ok := in.MethodDescriptorMap[methodName]
 				if !ok {
 					return nil, grpc.ErrUnauthenticated(grpc.ErrMethodDescriptorNotFound)
 				}
@@ -44,7 +47,7 @@ func NewFxEnforcerOption(in EnforcerOptionIn) grpc.MiddlewareOut {
 
 				ok, err = in.RoleEnforcer.Enforce(session, methodDescriptor.Role, methodDescriptor.Permission)
 				if !ok {
-					l.Error(err)
+					logger.Error(err)
 					return nil, grpc.ErrPermissionDenied(grpc.ErrSessionHasNotPermissions)
 				}
 
@@ -56,11 +59,13 @@ func NewFxEnforcerOption(in EnforcerOptionIn) grpc.MiddlewareOut {
 						field := fields.Get(i)
 						rightsEnforcer, err := rightsEnforcers.Get(message, field)
 						if err != nil {
+							logger.Error(err)
 							continue
 						}
 
 						ctx, err = rightsEnforcer.Enforce(ctx, session, message.Get(field))
 						if err != nil {
+							logger.Error(err)
 							return nil, grpc.ErrPermissionDenied(grpc.ErrSessionNotOwnEntity)
 						}
 					}

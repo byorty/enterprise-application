@@ -126,6 +126,8 @@ paths:
                   type: string
             tags:
                 - UserService
+            security:
+                - Bearer: []
     /v1/users/{user_uuid}/orders:
         post:
             summary: Создание заказа
@@ -151,6 +153,8 @@ paths:
                     $ref: '#/definitions/CreateOrderRequestParams'
             tags:
                 - UserService
+            security:
+                - Bearer: []
     /v1/users/{user_uuid}/products:
         get:
             summary: Получение товаров в корзине
@@ -171,6 +175,8 @@ paths:
                   type: string
             tags:
                 - UserService
+            security:
+                - Bearer: []
         post:
             summary: Добавление товара в корзину
             operationId: UserService_PutProduct
@@ -195,6 +201,8 @@ paths:
                     $ref: '#/definitions/PutProductRequestParams'
             tags:
                 - UserService
+            security:
+                - Bearer: []
     /v1/users/{user_uuid}/products/{user_product_uuid}:
         patch:
             summary: Изменение количества товара в корзине
@@ -224,6 +232,8 @@ paths:
                     $ref: '#/definitions/ChangeProductRequestParams'
             tags:
                 - UserService
+            security:
+                - Bearer: []
     /v1/users/authorize:
         post:
             summary: Авторизация пользователя

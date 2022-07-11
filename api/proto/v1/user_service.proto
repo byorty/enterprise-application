@@ -36,6 +36,12 @@ service UserService {
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Получение пользователя по UUID";
+            security: {
+                security_requirement: {
+                    key: "Bearer"
+                    value: {}
+                }
+            };
         };
     };
     rpc GetUserProducts(GetByUserUUIDRequest) returns (UserProductsResponse) {
@@ -44,6 +50,12 @@ service UserService {
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Получение товаров в корзине";
+            security: {
+                security_requirement: {
+                    key: "Bearer"
+                    value: {}
+                }
+            };
         };
     };
     rpc PutProduct(PutProductRequest) returns (UserProductsResponse) {
@@ -53,6 +65,12 @@ service UserService {
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Добавление товара в корзину";
+            security: {
+                security_requirement: {
+                    key: "Bearer"
+                    value: {}
+                }
+            };
         };
     };
     rpc ChangeProduct(ChangeProductRequest) returns (UserProductsResponse) {
@@ -62,6 +80,12 @@ service UserService {
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Изменение количества товара в корзине";
+            security: {
+                security_requirement: {
+                    key: "Bearer"
+                    value: {}
+                }
+            };
         };
     };
     rpc CreateOrder(CreateOrderRequest) returns (Order) {
@@ -71,6 +95,12 @@ service UserService {
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             summary: "Создание заказа";
+            security: {
+                security_requirement: {
+                    key: "Bearer"
+                    value: {}
+                }
+            };
         };
     };
 }
