@@ -471,7 +471,7 @@ var file_api_proto_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_api_proto_v1_user_proto_goTypes = []interface{}{
 	(UserGroup)(0),                // 0: pb.v1.UserGroup
 	(UserStatus)(0),               // 1: pb.v1.UserStatus
-	(Role)(0),                     // 2: pb.v1.Role
+	(Role)(0),                     // 2: pb.v1.Object
 	(Permission)(0),               // 3: pb.v1.Permission
 	(*User)(nil),                  // 4: pb.v1.User
 	(*Session)(nil),               // 5: pb.v1.Session

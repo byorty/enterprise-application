@@ -2,36 +2,30 @@ package validator
 
 import (
 	"context"
-	"github.com/byorty/enterprise-application/pkg/common/adapter/protoutil"
-	"go.uber.org/fx"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 type Validator interface {
-	Validate(ctx context.Context, message protoreflect.Message, field protoreflect.FieldDescriptor) error
+	Validate(ctx context.Context, value protoreflect.Value) error
 }
 
-type DescriptorOutFunc func() DescriptorOut
+type Form map[string]Validator
 
-type DescriptorOut struct {
-	fx.Out
-	Descriptor Descriptor `group:"validator"`
-}
+func (f Form) Validate(ctx context.Context, message protoreflect.Message) error {
+	fields := message.Descriptor().Fields()
+	for i := 0; i < fields.Len(); i++ {
+		field := fields.Get(i)
+		validator, ok := f[string(field.Name())]
+		if !ok {
+			continue
+		}
 
-type Descriptor struct {
-	Names     []string
-	Validator Validator
-}
-
-func NewFxMap(
-	descriptors []Descriptor,
-) *protoutil.Map[Validator] {
-	validatorMap := protoutil.NewMap[Validator]()
-	for _, descriptor := range descriptors {
-		for _, name := range descriptor.Names {
-			validatorMap.Set(name, descriptor.Validator)
+		err := validator.Validate(ctx, message.Get(field))
+		if err != nil {
+			return grpc.ErrInvalidArgument(err)
 		}
 	}
 
-	return validatorMap
+	return nil
 }
