@@ -3,7 +3,6 @@ package validator
 import (
 	"context"
 	"fmt"
-	"github.com/go-playground/validator/v10"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
@@ -11,8 +10,7 @@ import (
 
 func NewDatetime(duration time.Duration) Validator {
 	return &datetimeValidator{
-		validator: validator.New(),
-		duration:  duration,
+		duration: duration,
 	}
 }
 
@@ -25,17 +23,16 @@ func NewDeliveredAt() Validator {
 }
 
 type datetimeValidator struct {
-	duration  time.Duration
-	validator *validator.Validate
+	duration time.Duration
 }
 
 func (v datetimeValidator) Validate(ctx context.Context, value protoreflect.Value) error {
 	actualDatetime, ok := value.Message().Interface().(*timestamppb.Timestamp)
-	err := v.validator.VarCtx(ctx, ok, "eq=true")
+	err := validate.VarCtx(ctx, ok, "eq=true")
 	if err != nil {
 		return err
 	}
 
 	expectedDatetime := time.Now().Add(v.duration)
-	return v.validator.VarCtx(ctx, actualDatetime.AsTime().Unix(), fmt.Sprintf("gte=%d", expectedDatetime.Unix()))
+	return validate.VarCtx(ctx, actualDatetime.AsTime().Unix(), fmt.Sprintf("gte=%d", expectedDatetime.Unix()))
 }

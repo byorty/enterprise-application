@@ -18,6 +18,7 @@ var Constructors = fx.Provide(
 	grpc_option.NewFxPanicOption,
 	grpc_option.NewFxAuthOption,
 	grpc_option.NewFxEnforcerOption,
+	grpc_option.NewFxValidatorOption,
 	mux_option.NewFxMarshalerOption,
 	auth.NewFxJWTHelper,
 	auth.NewFxRoleEnforcer,

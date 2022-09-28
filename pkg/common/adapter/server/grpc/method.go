@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"github.com/byorty/enterprise-application/pkg/common/adapter/validator"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	"reflect"
 	"runtime"
@@ -11,6 +12,7 @@ type MethodDescriptor struct {
 	Method     interface{}
 	Role       pbv1.Role
 	Permission pbv1.Permission
+	Form       validator.Form
 }
 
 func (m *MethodDescriptor) GetName() (string, error) {
@@ -41,3 +43,10 @@ func NewFxMethodDescriptorMap(
 }
 
 type MethodDescriptorMap map[string]MethodDescriptor
+
+func (m MethodDescriptorMap) GetByFullName(fullName string) (MethodDescriptor, bool) {
+	methodNameParts := strings.Split(fullName, "/")
+	methodName := methodNameParts[len(methodNameParts)-1]
+	methodDescriptor, ok := m[methodName]
+	return methodDescriptor, ok
+}

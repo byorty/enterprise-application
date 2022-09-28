@@ -11,7 +11,6 @@ import (
 	"go.uber.org/fx"
 	gRPC "google.golang.org/grpc"
 	"google.golang.org/protobuf/reflect/protoreflect"
-	"strings"
 )
 
 type EnforcerOptionIn struct {
@@ -33,9 +32,7 @@ func NewFxEnforcerOption(in EnforcerOptionIn) grpc.MiddlewareOut {
 			Priority: 98,
 			GrpcOption: func(ctx context.Context, req interface{}, info *gRPC.UnaryServerInfo, handler gRPC.UnaryHandler) (resp interface{}, err error) {
 				logger := in.Logger.WithCtx(ctx, "middleware", "enforcer")
-				methodNameParts := strings.Split(info.FullMethod, "/")
-				methodName := methodNameParts[len(methodNameParts)-1]
-				methodDescriptor, ok := in.MethodDescriptorMap[methodName]
+				methodDescriptor, ok := in.MethodDescriptorMap.GetByFullName(info.FullMethod)
 				if !ok {
 					return nil, grpc.ErrUnauthenticated(grpc.ErrMethodDescriptorNotFound)
 				}

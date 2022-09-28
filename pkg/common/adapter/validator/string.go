@@ -3,14 +3,12 @@ package validator
 import (
 	"context"
 	"fmt"
-	"github.com/go-playground/validator/v10"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 func NewString(format string) Validator {
 	return &stringValidator{
-		validator: validator.New(),
-		format:    format,
+		format: format,
 	}
 }
 
@@ -31,10 +29,9 @@ func NewReqString() Validator {
 }
 
 type stringValidator struct {
-	validator *validator.Validate
-	format    string
+	format string
 }
 
 func (v stringValidator) Validate(ctx context.Context, value protoreflect.Value) error {
-	return v.validator.VarCtx(ctx, value.String(), v.format)
+	return validate.VarCtx(ctx, value.String(), v.format)
 }
