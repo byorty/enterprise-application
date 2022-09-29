@@ -5,6 +5,7 @@ import (
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	ordersrv "github.com/byorty/enterprise-application/pkg/order/domain/service"
+	"github.com/byorty/enterprise-application/pkg/order/infra/form"
 )
 
 var _ pbv1.OrderServiceServer = (*server)(nil)
@@ -23,6 +24,7 @@ func NewFxOrderServiceServer(
 				Method:     (*server).Checkout,
 				Role:       pbv1.RoleOrder,
 				Permission: pbv1.PermissionWrite,
+				Form:       form.Checkout,
 			},
 		},
 	}

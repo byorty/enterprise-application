@@ -5,6 +5,7 @@ import (
 	"github.com/byorty/enterprise-application/pkg/common/adapter/validator"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	"github.com/stretchr/testify/suite"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"testing"
 )
 
@@ -17,16 +18,8 @@ type EnumValidatorSuite struct {
 }
 
 func (s *EnumValidatorSuite) TestEnum() {
-	msg := &pbv1.User{}
-	protoMsg := msg.ProtoReflect()
-	groupField := protoMsg.Descriptor().Fields().Get(1)
 	v := validator.NewEnum(pbv1.UserGroup_name)
-
-	s.NotNil(v.Validate(context.Background(), protoMsg.Get(groupField)))
-
-	msg.Group = pbv1.UserGroup(999)
-	s.NotNil(v.Validate(context.Background(), protoMsg.Get(groupField)))
-
-	msg.Group = pbv1.UserGroupCustomer
-	s.Nil(v.Validate(context.Background(), protoMsg.Get(groupField)))
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf(pbv1.UserGroupGuest.Number())))
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf(pbv1.UserGroup(9999).Number())))
+	s.Nil(v.Validate(context.Background(), protoreflect.ValueOf(pbv1.UserGroupCustomer.Number())))
 }

@@ -5,16 +5,16 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
-func NewList(v Validator) Validator {
-	return &listValidator{
-		validator: v,
-	}
-}
-
 func NewReqList(v Validator) Validator {
 	return &listValidator{
 		validator: v,
 		required:  true,
+	}
+}
+
+func NewOptList(v Validator) Validator {
+	return &listValidator{
+		validator: v,
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	productsrv "github.com/byorty/enterprise-application/pkg/product/domain/service"
+	"github.com/byorty/enterprise-application/pkg/product/infra/form"
 )
 
 var _ pbv1.ProductServiceServer = (*server)(nil)
@@ -23,11 +24,13 @@ func NewFxProductServiceServer(
 				Method:     (*server).GetAllByFilter,
 				Role:       pbv1.RoleProduct,
 				Permission: pbv1.PermissionRead,
+				Form:       form.Products,
 			},
 			{
 				Method:     (*server).GetByUUID,
 				Role:       pbv1.RoleProduct,
 				Permission: pbv1.PermissionRead,
+				Form:       form.ProductUUID,
 			},
 		},
 	}

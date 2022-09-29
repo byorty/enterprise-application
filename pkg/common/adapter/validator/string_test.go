@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/Pallinder/go-randomdata"
 	"github.com/byorty/enterprise-application/pkg/common/adapter/validator"
-	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"testing"
 )
 
@@ -19,46 +19,29 @@ type StringValidatorSuite struct {
 }
 
 func (s *StringValidatorSuite) TestUUID() {
-	msg := &pbv1.User{}
-	protoMsg := msg.ProtoReflect()
-	uuidField := protoMsg.Descriptor().Fields().Get(0)
 	v := validator.NewUUID()
-
-	s.NotNil(v.Validate(context.Background(), protoMsg.Get(uuidField)))
-
-	msg.Uuid = randomdata.Alphanumeric(32)
-	s.NotNil(v.Validate(context.Background(), protoMsg.Get(uuidField)))
-
-	msg.Uuid = uuid.NewString()
-	s.Nil(v.Validate(context.Background(), protoMsg.Get(uuidField)))
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf("")))
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf(randomdata.Alphanumeric(32))))
+	s.Nil(v.Validate(context.Background(), protoreflect.ValueOf(uuid.NewString())))
 }
 
 func (s *StringValidatorSuite) TestPhoneNumber() {
-	msg := &pbv1.User{}
-	protoMsg := msg.ProtoReflect()
-	phoneNumber := protoMsg.Descriptor().Fields().Get(3)
 	v := validator.NewPhoneNumber()
-
-	s.NotNil(v.Validate(context.Background(), protoMsg.Get(phoneNumber)))
-
-	msg.PhoneNumber = randomdata.Alphanumeric(32)
-	s.NotNil(v.Validate(context.Background(), protoMsg.Get(phoneNumber)))
-
-	msg.PhoneNumber = "+79998887766"
-	s.Nil(v.Validate(context.Background(), protoMsg.Get(phoneNumber)))
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf("")))
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf(randomdata.Alphanumeric(32))))
+	s.Nil(v.Validate(context.Background(), protoreflect.ValueOf("+79008007060")))
 }
 
 func (s *StringValidatorSuite) TestMaxLen() {
-	msg := &pbv1.Order{}
-	protoMsg := msg.ProtoReflect()
-	address := protoMsg.Descriptor().Fields().Get(3)
 	v := validator.NewStringWithMaxLen(10)
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf("")))
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf(randomdata.Alphanumeric(32))))
+	s.Nil(v.Validate(context.Background(), protoreflect.ValueOf(randomdata.Alphanumeric(9))))
+}
 
-	s.NotNil(v.Validate(context.Background(), protoMsg.Get(address)))
-
-	msg.Address = randomdata.Alphanumeric(32)
-	s.NotNil(v.Validate(context.Background(), protoMsg.Get(address)))
-
-	msg.Address = randomdata.Alphanumeric(9)
-	s.Nil(v.Validate(context.Background(), protoMsg.Get(address)))
+func (s *StringValidatorSuite) TestAlphanumeric() {
+	v := validator.NewAlphanumeric()
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf("")))
+	s.NotNil(v.Validate(context.Background(), protoreflect.ValueOf("qazwsx!@#%%^")))
+	s.Nil(v.Validate(context.Background(), protoreflect.ValueOf(randomdata.Alphanumeric(32))))
 }

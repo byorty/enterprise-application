@@ -6,9 +6,9 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
-func NewString(format string) Validator {
+func NewString(condition string) Validator {
 	return &stringValidator{
-		format: format,
+		condition: condition,
 	}
 }
 
@@ -28,10 +28,14 @@ func NewReqString() Validator {
 	return NewString("required")
 }
 
+func NewAlphanumeric() Validator {
+	return NewString("alphanum")
+}
+
 type stringValidator struct {
-	format string
+	condition string
 }
 
 func (v stringValidator) Validate(ctx context.Context, value protoreflect.Value) error {
-	return validate.VarCtx(ctx, value.String(), v.format)
+	return validate.VarCtx(ctx, value.String(), v.condition)
 }

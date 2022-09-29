@@ -6,6 +6,7 @@ import (
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	ordersrv "github.com/byorty/enterprise-application/pkg/order/domain/service"
 	usersrv "github.com/byorty/enterprise-application/pkg/user/domain/service"
+	"github.com/byorty/enterprise-application/pkg/user/infra/form"
 )
 
 var _ pbv1.UserServiceServer = (*server)(nil)
@@ -28,36 +29,43 @@ func NewFxUserServiceServer(
 				Method:     (*server).Register,
 				Role:       pbv1.RoleUser,
 				Permission: pbv1.PermissionWrite,
+				Form:       form.PhoneNumber,
 			},
 			{
 				Method:     (*server).Authorize,
 				Role:       pbv1.RoleUser,
 				Permission: pbv1.PermissionWrite,
+				Form:       form.PhoneNumber,
 			},
 			{
 				Method:     (*server).GetByUUID,
 				Role:       pbv1.RoleUser,
 				Permission: pbv1.PermissionRead,
+				Form:       form.UserUUID,
 			},
 			{
 				Method:     (*server).GetUserProducts,
 				Role:       pbv1.RoleUser,
 				Permission: pbv1.PermissionRead,
+				Form:       form.UserUUID,
 			},
 			{
 				Method:     (*server).PutProduct,
 				Role:       pbv1.RoleUserProduct,
 				Permission: pbv1.PermissionRead,
+				Form:       form.PutProduct,
 			},
 			{
 				Method:     (*server).ChangeProduct,
 				Role:       pbv1.RoleUserProduct,
 				Permission: pbv1.PermissionRead,
+				Form:       form.ChangeProduct,
 			},
 			{
 				Method:     (*server).CreateOrder,
 				Role:       pbv1.RoleOrder,
 				Permission: pbv1.PermissionWrite,
+				Form:       form.CreateOrder,
 			},
 		},
 	}
