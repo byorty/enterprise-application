@@ -2,6 +2,7 @@ package userapp
 
 import (
 	"context"
+
 	"github.com/byorty/enterprise-application/pkg/common/adapter/server/grpc"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	ordersrv "github.com/byorty/enterprise-application/pkg/order/domain/service"
@@ -77,19 +78,38 @@ type server struct {
 	orderService       ordersrv.OrderService
 }
 
-func (s server) Register(ctx context.Context, request *pbv1.RegisterRequest) (*pbv1.TokenResponse, error) {
-	return s.userService.Register(ctx, request.PhoneNumber)
+func (s *server) Register(ctx context.Context, request *pbv1.RegisterRequest) (*pbv1.TokenResponse, error) {
+	token, err := s.userService.Register(ctx, request.PhoneNumber)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pbv1.TokenResponse{
+		Token: token,
+	}, nil
 }
 
-func (s server) Authorize(ctx context.Context, request *pbv1.AuthorizeRequest) (*pbv1.TokenResponse, error) {
-	return s.userService.Authorize(ctx, request.PhoneNumber)
+func (s *server) Authorize(ctx context.Context, request *pbv1.AuthorizeRequest) (*pbv1.TokenResponse, error) {
+	token, err := s.userService.Authorize(ctx, request.PhoneNumber)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pbv1.TokenResponse{
+		Token: token,
+	}, nil
 }
 
-func (s server) GetByUUID(ctx context.Context, request *pbv1.GetByUserUUIDRequest) (*pbv1.User, error) {
-	return s.userService.GetByUUID(ctx, request.UserUuid)
+func (s *server) GetByUUID(ctx context.Context, request *pbv1.GetByUserUUIDRequest) (*pbv1.User, error) {
+	user, err := s.userService.GetByUUID(ctx, request.UserUuid)
+	if err != nil {
+		return nil, err
+	}
+
+	return user.ToProto(), nil
 }
 
-func (s server) GetUserProducts(ctx context.Context, request *pbv1.GetByUserUUIDRequest) (*pbv1.UserProductsResponse, error) {
+func (s *server) GetUserProducts(ctx context.Context, request *pbv1.GetByUserUUIDRequest) (*pbv1.UserProductsResponse, error) {
 	userProducts, err := s.userProductService.GetAllByFilter(
 		ctx,
 		pbv1.GetUserProductRequestParams{
@@ -100,14 +120,14 @@ func (s server) GetUserProducts(ctx context.Context, request *pbv1.GetByUserUUID
 	}, err
 }
 
-func (s server) PutProduct(ctx context.Context, request *pbv1.PutProductRequest) (*pbv1.UserProductsResponse, error) {
+func (s *server) PutProduct(ctx context.Context, request *pbv1.PutProductRequest) (*pbv1.UserProductsResponse, error) {
 	userProducts, err := s.userProductService.Put(ctx, request.UserUuid, request.Params)
 	return &pbv1.UserProductsResponse{
 		Products: userProducts,
 	}, err
 }
 
-func (s server) ChangeProduct(ctx context.Context, request *pbv1.ChangeProductRequest) (*pbv1.UserProductsResponse, error) {
+func (s *server) ChangeProduct(ctx context.Context, request *pbv1.ChangeProductRequest) (*pbv1.UserProductsResponse, error) {
 	userProducts, err := s.userProductService.Change(ctx, request.UserUuid, request.UserProductUuid, request.Params)
 	return &pbv1.UserProductsResponse{
 		Products: userProducts,

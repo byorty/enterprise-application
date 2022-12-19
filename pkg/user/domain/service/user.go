@@ -2,11 +2,12 @@ package usersrv
 
 import (
 	"context"
-	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
+
+	userent "github.com/byorty/enterprise-application/pkg/user/domain/entity"
 )
 
 type UserService interface {
-	Register(ctx context.Context, phoneNumber string) (*pbv1.TokenResponse, error)
-	Authorize(ctx context.Context, phoneNumber string) (*pbv1.TokenResponse, error)
-	GetByUUID(ctx context.Context, uuid string) (*pbv1.User, error)
+	Register(ctx context.Context, phoneNumber string) (string, error)
+	Authorize(ctx context.Context, phoneNumber string) (string, error)
+	GetByUUID(ctx context.Context, uuid string) (*userent.User, error)
 }

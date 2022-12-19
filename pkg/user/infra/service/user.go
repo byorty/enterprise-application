@@ -2,87 +2,84 @@ package usersrvimpl
 
 import (
 	"context"
-	"github.com/Pallinder/go-randomdata"
+
 	"github.com/byorty/enterprise-application/pkg/common/adapter/auth"
-	"github.com/byorty/enterprise-application/pkg/common/collection"
+	"github.com/byorty/enterprise-application/pkg/common/adapter/db"
 	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
+	userent "github.com/byorty/enterprise-application/pkg/user/domain/entity"
+	userrp "github.com/byorty/enterprise-application/pkg/user/domain/repo"
 	usersrv "github.com/byorty/enterprise-application/pkg/user/domain/service"
 	"github.com/google/uuid"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func NewFxUserService(
 	sessionManager auth.SessionManager,
-) usersrv.UserService {
-	return &userService{
-		sessionManager: sessionManager,
-		users: collection.ImportMap[string, *pbv1.User](map[string]*pbv1.User{
-			"387301f4-551c-4022-900a-80f6f76f3a10": {
-				Uuid:        "387301f4-551c-4022-900a-80f6f76f3a10",
-				Group:       pbv1.UserGroupCustomer,
-				Status:      pbv1.UserStatusActive,
-				PhoneNumber: "+79008007060",
-				Lastname:    "Иванов",
-				Firstname:   "Иван",
-				CreatedAt:   timestamppb.Now(),
-			},
-		}),
-	}
-}
-
-type userService struct {
-	sessionManager auth.SessionManager
-	users          collection.Map[string, *pbv1.User]
-}
-
-func (s *userService) Register(ctx context.Context, phoneNumber string) (*pbv1.TokenResponse, error) {
-	for _, user := range s.users.Entries() {
-		if user.PhoneNumber == phoneNumber {
-			return nil, usersrv.ErrUserAlreadyExists
-		}
-	}
-
-	user := &pbv1.User{
-		Uuid:        uuid.NewString(),
-		Group:       pbv1.UserGroupCustomer,
-		Status:      pbv1.UserStatusActive,
-		PhoneNumber: phoneNumber,
-		Lastname:    randomdata.LastName(),
-		Firstname:   randomdata.FirstName(1),
-		CreatedAt:   timestamppb.Now(),
-	}
-
-	token, err := s.sessionManager.CreateToken(ctx, user.Uuid, user.Group)
+	pool db.Pool,
+	userRepoFactory userrp.UserRepoFactory,
+) (usersrv.UserService, error) {
+	conn, err := pool.Get(db.UserKind)
 	if err != nil {
 		return nil, err
 	}
 
-	s.users.Set(user.Uuid, user)
-	return &pbv1.TokenResponse{
-		Token: token,
+	return &userService{
+		sessionManager:  sessionManager,
+		userRepoFactory: userRepoFactory,
+		conn:            conn,
 	}, nil
 }
 
-func (s *userService) Authorize(ctx context.Context, phoneNumber string) (*pbv1.TokenResponse, error) {
-	for _, user := range s.users.Entries() {
-		if user.PhoneNumber == phoneNumber {
-			token, err := s.sessionManager.CreateToken(ctx, user.Uuid, user.Group)
-			if err != nil {
-				return nil, err
-			}
-
-			return &pbv1.TokenResponse{
-				Token: token,
-			}, nil
-		}
-	}
-
-	return nil, usersrv.ErrUserNotFound
+type userService struct {
+	sessionManager  auth.SessionManager
+	userRepoFactory userrp.UserRepoFactory
+	conn            db.DB
 }
 
-func (s *userService) GetByUUID(ctx context.Context, uuid string) (*pbv1.User, error) {
-	user, ok := s.users.Get(uuid)
-	if !ok {
+func (s *userService) Register(ctx context.Context, phoneNumber string) (string, error) {
+	userRepo := s.userRepoFactory.Create(ctx, s.conn)
+	user, _ := userRepo.GetActiveByPhoneNumber(ctx, phoneNumber)
+	if user != nil {
+		return "", usersrv.ErrUserAlreadyExists
+	}
+
+	user = &userent.User{
+		UUID:        uuid.NewString(),
+		Group:       pbv1.UserGroupCustomer,
+		Status:      pbv1.UserStatusActive,
+		PhoneNumber: phoneNumber,
+	}
+	err := userRepo.Save(ctx, user)
+	if err != nil {
+		return "", err
+	}
+
+	token, err := s.sessionManager.CreateToken(ctx, user.UUID, user.Group)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+func (s *userService) Authorize(ctx context.Context, phoneNumber string) (string, error) {
+	userRepo := s.userRepoFactory.Create(ctx, s.conn)
+	user, err := userRepo.GetActiveByPhoneNumber(ctx, phoneNumber)
+	if err != nil {
+		return "", usersrv.ErrUserNotFound
+	}
+
+	token, err := s.sessionManager.CreateToken(ctx, user.UUID, user.Group)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+func (s *userService) GetByUUID(ctx context.Context, uuid string) (*userent.User, error) {
+	userRepo := s.userRepoFactory.Create(ctx, s.conn)
+	user, err := userRepo.GetByUUID(ctx, uuid)
+	if err != nil {
 		return nil, usersrv.ErrUserNotFound
 	}
 
