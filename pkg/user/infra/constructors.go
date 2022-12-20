@@ -13,4 +13,5 @@ var Constructors = fx.Provide(
 	middleware.NewFxUserRightsEnforcer,
 	middleware.NewFxUserProductRightsEnforcer,
 	userrpimpl.NewFxUserRepoFactory,
+	userrpimpl.NewFxUserProductRepoFactory,
 )

@@ -2,6 +2,7 @@ package suite_helper
 
 import (
 	"context"
+
 	"github.com/byorty/enterprise-application/pkg/common/adapter/dockertest"
 
 	"github.com/stretchr/testify/suite"
@@ -9,12 +10,12 @@ import (
 
 type RepoSuite struct {
 	suite.Suite
-	ctx context.Context
+	Ctx context.Context
 	*dockertest.PG
 }
 
 func (s *RepoSuite) SetupSuite() {
-	s.ctx = context.Background()
+	s.Ctx = context.Background()
 	var err error
 	s.PG, err = dockertest.NewPG("")
 	s.Nil(err)

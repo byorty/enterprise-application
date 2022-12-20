@@ -34,8 +34,8 @@ func (u User) ToProto() *pbv1.User {
 	}
 }
 
-type UserSlice collection.PrototypedSlice[*User]
+type UserSlice collection.Slice[*User]
 
 func NewUserSlice() UserSlice {
-	return collection.NewPrototypedSlice[*User]()
+	return collection.NewSlice[*User]()
 }

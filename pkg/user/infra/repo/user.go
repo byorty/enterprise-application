@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/byorty/enterprise-application/pkg/common/adapter/db"
+	pbv1 "github.com/byorty/enterprise-application/pkg/common/gen/api/proto/v1"
 	userent "github.com/byorty/enterprise-application/pkg/user/domain/entity"
 	userrp "github.com/byorty/enterprise-application/pkg/user/domain/repo"
 )
@@ -27,7 +28,10 @@ type userRepo struct {
 
 func (u userRepo) GetActiveByPhoneNumber(ctx context.Context, phoneNumber string) (*userent.User, error) {
 	var model userent.User
-	err := u.DB().Model(&model).Where("phone_number = ?", phoneNumber).Select()
+	err := u.DB().Model(&model).
+		Where("phone_number = ?", phoneNumber).
+		Where("status = ?", pbv1.UserStatusActive).
+		Select()
 	if err != nil {
 		return nil, err
 	}
